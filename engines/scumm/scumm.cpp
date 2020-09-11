@@ -2178,14 +2178,14 @@ Common::Error ScummEngine::go() {
 }
 
 void ScummEngine::waitForTimer(int msec_delay) {
-	uint32 start_time;
 
 	if (_fastMode & 2)
 		msec_delay = 0;
 	else if (_fastMode & 1)
 		msec_delay = 10;
 
-	start_time = _system->getMillis();
+	uint32 time;
+	const uint32 wakeUpTime = _system->getMillis() + msec_delay;
 
 	while (!shouldQuit()) {
 		_sound->updateCD(); // Loop CD Audio if needed
@@ -2197,9 +2197,15 @@ void ScummEngine::waitForTimer(int msec_delay) {
 #endif
 
 		_system->updateScreen();
-		if (_system->getMillis() >= start_time + msec_delay)
+
+		time = _system->getMillis();
+		if (time + 10 < wakeUpTime) {
+			_system->delayMillis(10);
+		} else {
+			if (time < wakeUpTime)
+				_system->delayMillis(wakeUpTime - time);
 			break;
-		_system->delayMillis(10);
+		}
 	}
 }
 
