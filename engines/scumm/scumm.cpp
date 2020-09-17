@@ -2175,7 +2175,7 @@ Common::Error ScummEngine::go() {
 void ScummEngine::waitForTimer(int delay) {
 	// Convert to milliseconds, decompose to integral and fractional parts,
 	// then increment the integer if needed.
-	const double fMsecDelay = delay * (1000 / 60.0) / 4;
+	const double fMsecDelay = delay * (1000 / getTimerFrequency());
 	uint32 msecDelay = (uint32)fMsecDelay;
 	_msecFractionalParts += fMsecDelay - msecDelay;
 	msecDelay += (uint32)_msecFractionalParts;
@@ -2217,6 +2217,27 @@ void ScummEngine::waitForTimer(int delay) {
 
 	// Start the stop watch!
 	_lastWaitTime = wakeUpTime;
+}
+
+double ScummEngine::getTimerFrequency() const {
+	const double frequencyIntel8253 = 1193182.0;
+	// WORKAROUND: We need to check for kPlatformUnknown for some DOS games.
+	if (_game.platform != Common::kPlatformDOS && _game.platform != Common::kPlatformUnknown)
+		return 240.0;
+
+	switch (_game.version) {
+	case 1:
+	case 2:
+	case 3:
+	case 4:
+		if (_game.id == GID_MONKEY_VGA)
+			return frequencyIntel8253 / 2521 / 2; // 236.6485 Hz
+		return frequencyIntel8253 / 5041;         // 236.6955 Hz
+	case 6:
+		return 236.0;
+	default:
+		return 240.0;
+	}
 }
 
 void ScummEngine_v0::scummLoop(int delta) {

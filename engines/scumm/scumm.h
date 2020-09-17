@@ -477,6 +477,7 @@ protected:
 	virtual void parseEvent(Common::Event event);
 
 	void waitForTimer(int delay);
+	double getTimerFrequency() const;
 	double _msecFractionalParts;
 	uint32 _lastWaitTime;
 
