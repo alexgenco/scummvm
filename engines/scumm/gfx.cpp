@@ -66,7 +66,6 @@ struct StripTable {
 };
 
 enum {
-	kScrolltime = 500,  // ms scrolling is supposed to take
 	kPictureDelay = 20,
 	kFadeDelay = 4 // 1/4th of a jiffie
 };
@@ -4065,15 +4064,8 @@ void ScummEngine::scrollEffect(int dir) {
 	VirtScreen *vs = &_virtscr[kMainVirtScreen];
 
 	int x, y;
-	int step;
-	const int delay = (VAR_FADE_DELAY != 0xFF) ? VAR(VAR_FADE_DELAY) * kFadeDelay : kPictureDelay;
-
-	if ((dir == 0) || (dir == 1))
-		step = vs->h;
-	else
-		step = vs->w;
-
-	step = (step * delay) / kScrolltime;
+	const int step = 8;
+	const int delay = VAR(VAR_FADE_DELAY) * kFadeDelay;
 
 	byte *src;
 	int m = _textSurfaceMultiplier;
