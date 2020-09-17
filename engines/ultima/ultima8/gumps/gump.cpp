@@ -757,9 +757,9 @@ bool Gump::OnKeyUp(int key) {
 	return handled;
 }
 
-bool Gump::OnTextInput(int unicode) {
+bool Gump::OnTextInput(char c) {
 	bool handled = false;
-	if (_focusChild) handled = _focusChild->OnTextInput(unicode);
+	if (_focusChild) handled = _focusChild->OnTextInput(c);
 	return handled;
 }
 

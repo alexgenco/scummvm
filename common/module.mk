@@ -3,6 +3,7 @@ MODULE := common
 MODULE_OBJS := \
 	achievements.o \
 	archive.o \
+	codepages.o \
 	config-manager.o \
 	coroutines.o \
 	dcl.o \
@@ -17,6 +18,7 @@ MODULE_OBJS := \
 	ini-file.o \
 	installshield_cab.o \
 	json.o \
+	keyboard.o \
 	language.o \
 	localization.o \
 	macresman.o \

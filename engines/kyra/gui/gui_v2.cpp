@@ -758,20 +758,19 @@ const char *GUI_v2::nameInputProcess(char *buffer, int x, int y, uint8 c1, uint8
 		_screen->setFont(of);
 		processHighlights(_savenameMenu);
 
-		char inputKey = _keyPressed.ascii;
-		Util::convertISOToDOS(inputKey);
+		char inputKey = _keyPressed.getINT16hCharacter();
 
-		if (_keyPressed.keycode == Common::KEYCODE_RETURN || _keyPressed.keycode == Common::KEYCODE_KP_ENTER || _finishNameInput) {
+		if (inputKey == Common::ASCII_RETURN || _finishNameInput) {
 			if (checkSavegameDescription(buffer, curPos)) {
 				buffer[curPos] = 0;
 				running = false;
 			} else {
 				_finishNameInput = false;
 			}
-		} else if (_keyPressed.keycode == Common::KEYCODE_ESCAPE || _cancelNameInput) {
+		} else if (inputKey == Common::ASCII_ESCAPE || _cancelNameInput) {
 			running = false;
 			return 0;
-		} else if ((_keyPressed.keycode == Common::KEYCODE_BACKSPACE || _keyPressed.keycode == Common::KEYCODE_DELETE) && curPos > 0) {
+		} else if ((inputKey == Common::ASCII_BACKSPACE || _keyPressed.keycode == Common::KEYCODE_DELETE) && curPos > 0) {
 			drawTextfieldBlock(x2, y2, c2);
 			--curPos;
 			x2 -= getCharWidth(buffer[curPos]);

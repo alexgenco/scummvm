@@ -31,6 +31,7 @@
 #include "common/singleton.h"
 
 class OSystem;
+class MetaEngineStatic;
 class MetaEngine;
 
 namespace Audio {
@@ -378,6 +379,7 @@ public:
 	 */
 	static bool shouldQuit();
 
+	static MetaEngineStatic &getMetaEngineStatic();
 	static MetaEngine &getMetaEngine();
 
 	/**

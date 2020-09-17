@@ -557,10 +557,9 @@ bool Surface::getString(Common::String &line, int maxSize, bool isNumeric, bool 
 
 			while (events.pollEvent()) {
 				if (events.type() == Common::EVENT_KEYDOWN) {
-					char ch = events.event().kbd.ascii;
-					uint16 keycode = events.event().kbd.keycode;
+					char ch = events.event().kbd.getINT16hCharacter();
 
-					if ((keycode == Common::KEYCODE_RETURN) || (keycode == Common::KEYCODE_KP_ENTER)) {
+					if (ch == Common::ASCII_RETURN) {
 						// Return character
 						screen.screen().fillRect(
 							Common::Rect(x, y, x + maxSize - 1, y + FONT_HEIGHT), bgColor);
@@ -571,13 +570,13 @@ bool Surface::getString(Common::String &line, int maxSize, bool isNumeric, bool 
 							mouse.cursorOn();
 						return true;
 					}
-					else if (keycode == Common::KEYCODE_ESCAPE) {
+					else if (ch == Common::ASCII_ESCAPE) {
 						// Escape character
 						screen.screen().fillRect(
 							Common::Rect(x, y, x + maxSize - 1, y + FONT_HEIGHT), bgColor);
 						screen.update();
 						abortFlag = true;
-					} else if (keycode == Common::KEYCODE_BACKSPACE) {
+					} else if (ch == Common::ASCII_BACKSPACE) {
 						// Delete the last character
 						if (newLine.size() == 1) continue;
 
@@ -586,8 +585,8 @@ bool Surface::getString(Common::String &line, int maxSize, bool isNumeric, bool 
 						newLine.deleteChar(newLine.size() - 2);
 						refreshFlag = true;
 
-					} else if ((ch >= ' ') && (stringSize + 8 < maxSize)) {
-						if (((ch >= '0') && (ch <= '9')) || !isNumeric) {
+					} else if (Common::isPrint((uint8)ch) && (stringSize + 8 < maxSize)) {
+						if (Common::isDigit(ch) || !isNumeric) {
 							screen.screen().fillRect(
 								Common::Rect(x, y, x + maxSize - 1, y + FONT_HEIGHT), bgColor);
 							newLine.insertChar(ch, newLine.size() - 1);
@@ -1372,7 +1371,9 @@ bool CopyProtectionDialog::show() {
 		while (!engine.shouldQuit()) {
 			while (events.pollEvent() && (_charIndex < 4)) {
 				if (events.type() == Common::EVENT_KEYDOWN) {
-					if ((events.event().kbd.keycode == Common::KEYCODE_BACKSPACE) && (_charIndex > 0)) {
+					char ch = events.event().kbd.getINT16hCharacter();
+
+					if ((ch == Common::ASCII_BACKSPACE) && (_charIndex > 0)) {
 						// Remove the last number typed
 						--_charIndex;
 						HotspotsList::iterator tmpHotspot = _hotspots.begin();
@@ -1382,13 +1383,12 @@ bool CopyProtectionDialog::show() {
 						(*tmpHotspot)->copyTo(&screen.screen());
 
 						screen.update();
-					} else if ((events.event().kbd.ascii >= '0') &&
-							   (events.event().kbd.ascii <= '9')) {
+					} else if (Common::isDigit((uint8)ch)) {
 						HotspotsList::iterator tmpHotspot = _hotspots.begin();
 						for (int i = 0; i < _charIndex + 3; i++)
 							++tmpHotspot;
 						// Number pressed
-						(*tmpHotspot)->setFrameNumber(events.event().kbd.ascii - '0');
+						(*tmpHotspot)->setFrameNumber(ch - '0');
 						(*tmpHotspot)->copyTo(&screen.screen());
 
 						++_charIndex;

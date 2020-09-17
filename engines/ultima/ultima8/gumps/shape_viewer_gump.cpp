@@ -277,8 +277,8 @@ bool ShapeViewerGump::OnKeyDown(int key, int mod) {
 	return true;
 }
 
-bool ShapeViewerGump::OnTextInput(int unicode) {
-	switch (unicode) {
+bool ShapeViewerGump::OnTextInput(char c) {
+	switch (c) {
 	case 'b':
 		_background += 0x808080;
 		_background &= 0xF0F0F0;

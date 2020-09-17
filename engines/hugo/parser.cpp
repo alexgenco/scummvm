@@ -227,11 +227,11 @@ void Parser::charHandler() {
 			_getIndex = 0;
 
 		switch (c) {
-		case Common::KEYCODE_BACKSPACE:             // Rubout key
+		case Common::ASCII_BACKSPACE:             // Rubout key
 			if (_cmdLineIndex)
 				_cmdLine[--_cmdLineIndex] = '\0';
 			break;
-		case Common::KEYCODE_RETURN:                // EOL, pass line to line handler
+		case Common::ASCII_RETURN:                // EOL, pass line to line handler
 			if (_cmdLineIndex && (_vm->_hero->_pathType != kPathQuiet)) {
 				// Remove inventory bar if active
 				if (_vm->_inventory->getInventoryState() == kInventoryActive)
@@ -245,7 +245,7 @@ void Parser::charHandler() {
 			if (_cmdLineIndex >= kMaxLineSize) {
 				//MessageBeep(MB_ICONASTERISK);
 				warning("STUB: MessageBeep() - Command line too long");
-			} else if (Common::isPrint(c)) {
+			} else if (Common::isPrint((uint8)c)) {
 				_cmdLine[_cmdLineIndex++] = c;
 				_cmdLine[_cmdLineIndex] = '\0';
 			}
@@ -281,9 +281,6 @@ void Parser::keyHandler(Common::Event event) {
 	Status &gameStatus = _vm->getGameStatus();
 	uint16 nChar = event.kbd.keycode;
 
-	if (event.kbd.flags & (Common::KBD_ALT | Common::KBD_SCRL))
-		return;
-
 	if (event.kbd.hasFlags(Common::KBD_CTRL)) {
 		switch (nChar) {
 		case Common::KEYCODE_l:
@@ -304,7 +301,6 @@ void Parser::keyHandler(Common::Event event) {
 		default:
 			break;
 		}
-		return;
 	}
 
 	// Process key down event - called from OnKeyDown()
@@ -375,7 +371,7 @@ void Parser::keyHandler(Common::Event event) {
 			if (bnext >= sizeof(_ringBuffer))
 				bnext = 0;
 			if (bnext != _getIndex) {
-				_ringBuffer[_putIndex] = event.kbd.ascii;
+				_ringBuffer[_putIndex] = event.kbd.getINT16hCharacter();
 				_putIndex = bnext;
 			}
 		}

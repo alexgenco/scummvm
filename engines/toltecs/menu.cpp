@@ -182,25 +182,26 @@ void MenuSystem::handleMouseClick(int x, int y) {
 
 void MenuSystem::handleKeyDown(const Common::KeyState& kbd) {
 	if (_editingDescription) {
-		if (kbd.keycode >= Common::KEYCODE_SPACE && kbd.keycode <= Common::KEYCODE_z) {
-			_editingDescriptionItem->caption += kbd.ascii;
-			restoreRect(_editingDescriptionItem->rect.left, _editingDescriptionItem->rect.top,
-				_editingDescriptionItem->rect.width() + 1, _editingDescriptionItem->rect.height() - 2);
-			setItemCaption(_editingDescriptionItem, _editingDescriptionItem->caption.c_str());
-			drawItem(_editingDescriptionID, true);
-		} else if (kbd.keycode == Common::KEYCODE_BACKSPACE) {
+		const char c = kbd.getINT16hCharacter();
+		if (c == Common::ASCII_BACKSPACE) {
 			_editingDescriptionItem->caption.deleteLastChar();
 			restoreRect(_editingDescriptionItem->rect.left, _editingDescriptionItem->rect.top,
 				_editingDescriptionItem->rect.width() + 1, _editingDescriptionItem->rect.height() - 2);
 			setItemCaption(_editingDescriptionItem, _editingDescriptionItem->caption.c_str());
 			drawItem(_editingDescriptionID, true);
-		} else if (kbd.keycode == Common::KEYCODE_RETURN) {
+		} else if (c == Common::ASCII_RETURN) {
 			SavegameItem *savegameItem = getSavegameItemByID(_editingDescriptionID);
 			_editingDescription = false;
 			_vm->requestSavegame(savegameItem->_slotNum, _editingDescriptionItem->caption);
 			_running = false;
-		} else if (kbd.keycode == Common::KEYCODE_ESCAPE) {
+		} else if (c == Common::ASCII_ESCAPE) {
 			_editingDescription = false;
+		} else if ((uint8)c >= 0x20) {
+			_editingDescriptionItem->caption += c;
+			restoreRect(_editingDescriptionItem->rect.left, _editingDescriptionItem->rect.top,
+			            _editingDescriptionItem->rect.width() + 1, _editingDescriptionItem->rect.height() - 2);
+			setItemCaption(_editingDescriptionItem, _editingDescriptionItem->caption.c_str());
+			drawItem(_editingDescriptionID, true);
 		}
 	}
 }

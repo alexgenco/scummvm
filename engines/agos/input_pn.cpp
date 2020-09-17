@@ -63,11 +63,10 @@ void AGOSEngine_PN::handleKeyboard() {
 		}
 	}
 	if (chr == -1) {
-		if (_keyPressed.keycode == Common::KEYCODE_BACKSPACE || _keyPressed.keycode == Common::KEYCODE_RETURN) {
-			chr = _keyPressed.keycode;
+		chr = _keyPressed.getINT16hCharacter();
+		if (chr == 8 || chr == 13 || chr == 127) {
 			addChar(chr);
 		} else if (!(_videoLockOut & 0x10)) {
-			chr = _keyPressed.ascii;
 			if (chr >= 32)
 				addChar(chr);
 		}
@@ -115,7 +114,7 @@ void AGOSEngine_PN::addChar(uint8 chr) {
 	if (chr == 13) {
 		_keyboardBuffer[_intputCounter++] = chr;
 		windowPutChar(_inputWindow, 13);
-	} else if (chr == 8 && _intputCounter) {
+	} else if ((chr == 8 || chr == 127) && _intputCounter) {
 		clearCursor(_inputWindow);
 		windowPutChar(_inputWindow, 8);
 		windowPutChar(_inputWindow, 128);

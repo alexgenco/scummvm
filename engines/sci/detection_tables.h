@@ -22,8 +22,6 @@
 
 namespace Sci {
 
-#include "sci/sci.h"
-
 #define GUIO_STD16 GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_MIDI_MODE)
 #define GUIO_STD16_UNDITHER GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_MIDI_MODE)
 #define GUIO_STD16_SPEECH GUIO3(GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_MIDI_MODE)
@@ -5135,8 +5133,11 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformWindows, ADGF_CD, GUIO5(GUIO_MIDIGM, GAMEOPTION_SQ4_SILVER_CURSORS, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_MIDI_MODE)	},
 
-	// Space Quest 4 - English DOS CD patch 1.2 (unofficial - NRS) - THIS VERSION IS PIRATED/CRACKED AND REPACKAGED =DO NOT RE-ADD=
-	// In essence, this "patch" includes a mixture the CD and floppy versions (the whole game), without the speech file
+	// Space Quest 4 - English DOS CD "NRS SQ4 Update 1.2" (unofficial patch)
+	// This patch set was distributed as a mixture the CD and floppy versions (the whole game)
+	// without the speech files, at least initially, and so it is not allowed.
+	// Version 1.3 is instead distributed as a set of patches and diffs which require the user
+	// to provide the full CD and floppy versions, and so it is happily supported.
 	{"sq4", "CD", {
 		{"resource.map", 0, "38287a646458a1dabded55d094407793", 7139},
 		{"resource.000", 0, "231fd8421e1f211e1bcf9d7b8b6408e7", 9525849},
@@ -5545,7 +5546,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	FANMADE("Aquarius: An Aquatic Experience", "2e23bc3b82f22a454be202ea593fb478", 480, "01555c8de683d25405bda270aa1ff014", 272372),
 	FANMADE("Betrayed Alliance 1.0", "b1f43f496a83cb8503f290a838b26242", 4062, "e637255aae6191ee92b9e843ad276288", 2367197),
 	FANMADE("Betrayed Alliance 1.1", "bb776e42e93f8b98006d6481fb73a588", 4080, "ad7bcfa11f914f23ddbe32723700391e", 2391020),
-	FANMADE("Betrayed Alliance 1.2", "ade9f8124dae2e6aced8b5bfc0f54411", 4200, "4599d184348e8dfa99a1804f41966177", 2498493),
+	FANMADE("Betrayed Alliance 1.2", "ade9f8124dae2e6aced8b5bfc0f54411", 4200, "4599d184348e8dfa99a1804f41966177", 2498493), // original version
+	FANMADE("Betrayed Alliance 1.2", "30431334d821d23e584d6f4c0a3d5b61", 4206, "42e3a857f589eef8a8567b86b71f7fb9", 2503541), // "stealth updated" version
 	FANMADE("Bluntman and Chronic (Politically Correct Version)", "c3ef9fa6c7c5fb840078bf28d87c7f8b", 1362, "441636a9f6f86710844868fded868ee7", 596688),
 	FANMADE("Cascade Quest", "c94efc10d18c040b6e22a1dc6d3adfe1", 3468, "8ada33dfa945f81531e5508240b573de", 1432195),
 	FANMADE("Circus Quest", "35871f6b4e1df56af4113c0203a0b223", 630, "7d6f97d7935d8733f488d4cb74315e5b", 279627),
@@ -5582,6 +5584,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	FANMADE("SCI Studio Template 3.0", "ca0dc8d586e0a8670b7621cde090b532", 354, "58a48ee692a86c0575e6bd0b00a92b9a", 113097),
 	FANMADE("SCI Quest", "9067e1f1e54436d2dbfce855524bc84a", 552, "ffa7d355cd9223f245289108a696bcd2", 149634),
 	FANMADE("SCI-Man", "3ab85bd39a86c11f85781764f9db09bb", 468, "bb8f9992f504a242bf0860e3588e150b", 131810),
+	FANMADE("Soulshade Asylum", "965a07e7fb6fd9563b94c969b72cfe2a", 546, "57401d18559985e569085a69edda691e", 244786),
 	FANMADE("Text Views Demo", "ad0485a96470566517f184ff5dd049f8", 372, "727b946b37588ed334737732c55007c4", 115788),
 	FANMADE("The Black Cauldron Demo", "5e1ff2833c7f33ebcfa456ba836e2067", 2592, "2f8e6264d2db91bb54982ab8aa18b3b4", 1881839),
 	FANMADE("The Black Cauldron Final", "cbb4705f0cd73760996e5b27aae54f6a", 2484, "fc3bcaa7783b91bb78faefa345c6b3d9", 1677293),

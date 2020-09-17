@@ -28,11 +28,10 @@ namespace Ultima {
 namespace Ultima4 {
 
 bool AlphaActionController::keyPressed(int key) {
-	if (Common::isLower(key))
-		key = toupper(key);
+	const char c = toupper(key & 0xFF);
 
-	if (key >= 'A' && key <= toupper(_lastValidLetter)) {
-		_value = key - 'A';
+	if (c >= 'A' && c <= toupper(_lastValidLetter)) {
+		_value = c - 'A';
 		doneWaiting();
 	} else {
 		g_screen->screenMessage("\n%s", _prompt.c_str());

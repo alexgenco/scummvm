@@ -280,7 +280,7 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 			} else {
 				KeyMap::const_iterator keycode = _keyMap.find(event.kbd.keycode);
 				if (_asciiCodeEvents) {
-					keys = event.kbd.ascii;
+					keys = event.kbd.getINT16hCharacter();
 				} else if (keycode != _keyMap.end()) {
 					keys = keycode->_value;
 					if (event.kbd.flags & Common::KBD_SHIFT)

@@ -38,6 +38,7 @@
 #include "tinsel/graphics.h"
 #include "tinsel/sound.h"
 #include "tinsel/dw.h"
+#include "tinsel/detection.h"
 
 /**
  * This is the namespace of the Tinsel engine.
@@ -59,43 +60,13 @@ class Music;
 class SoundManager;
 class Background;
 class Font;
+class Cursor;
+class Actor;
+class Handle;
+class Scroll;
+class Dialogs;
 
 typedef Common::List<Common::Rect> RectList;
-
-enum TinselGameID {
-	GID_DW1 = 0,
-	GID_DW2 = 1
-};
-
-enum TinselGameFeatures {
-	GF_SCNFILES = 1 << 0,
-	GF_ENHANCED_AUDIO_SUPPORT = 1 << 1,
-	GF_ALT_MIDI = 1 << 2,		// Alternate sequence in midi.dat file
-
-	// The GF_USE_?FLAGS values specify how many country flags are displayed
-	// in the subtitles options dialog.
-	// None of these defined -> 1 language, in ENGLISH.TXT
-	GF_USE_3FLAGS = 1 << 3,	// French, German, Spanish
-	GF_USE_4FLAGS = 1 << 4,	// French, German, Spanish, Italian
-	GF_USE_5FLAGS = 1 << 5	// All 5 flags
-};
-
-/**
- * The following is the ScummVM definitions of the various Tinsel versions:
- * TINSEL_V0 - This was an early engine version that was only used in the Discworld 1
- *			demo.
- * TINSEL_V1 - This was the engine version used by Discworld 1. Note that there were two
- *			major releases: an earlier version that used *.gra files, and a later one that
- *			used *.scn files, and contained certain script and engine bugfixes. In ScummVM,
- *			we treat both releases as 'Tinsel 1', since the engine fixes from the later
- *			version work equally well the earlier version data.
- * TINSEL_V2 - This is the engine used for the Discworld 2 game.
- */
-enum TinselEngineVersion {
-	TINSEL_V0 = 0,
-	TINSEL_V1 = 1,
-	TINSEL_V2 = 2
-};
 
 enum {
 	kTinselDebugAnimations = 1 << 0,
@@ -108,14 +79,35 @@ enum {
 #define DEBUG_INTERMEDIATE 2
 #define DEBUG_DETAILED 3
 
-struct TinselGameDescription;
-
 enum TinselKeyDirection {
 	MSK_LEFT = 1, MSK_RIGHT = 2, MSK_UP = 4, MSK_DOWN = 8,
 	MSK_DIRECTION = MSK_LEFT | MSK_RIGHT | MSK_UP | MSK_DOWN
 };
 
-typedef bool (*KEYFPTR)(const Common::KeyState &);
+enum TinselKeyCode {
+	kTinselKeyBackspace = 8,
+	kTinselKeyReturn    = 13,
+	kTinselKeyEscape    = 27,
+	kTinselKeyWalkTo    = ' ',
+
+	kTinselKeyAltX      = 0x2D00,
+	kTinselKeyAltM      = 0x3200,
+
+	kTinselKeyF1        = 0x3B00,
+	kTinselKeyF5        = 0x3F00,
+	kTinselKeyF7        = 0x4100,
+
+	kTinselKeyHome      = 0x4700,
+	kTinselKeyUp        = 0x4800,
+	kTinselKeyPageUp    = 0x4900,
+	kTinselKeyLeft      = 0x4B00,
+	kTinselKeyRight     = 0x4D00,
+	kTinselKeyEnd       = 0x4F00,
+	kTinselKeyDown      = 0x5000,
+	kTinselKeyPageDown  = 0x5100
+};
+
+typedef bool (*KEYFPTR)(const uint16 &);
 
 #define	SCREEN_WIDTH	(_vm->screen().w)	// PC screen dimensions
 #define	SCREEN_HEIGHT	(_vm->screen().h)
@@ -202,8 +194,12 @@ public:
 	BMVPlayer *_bmv;
 	Background* _bg;
 	Font *_font;
-
+	Cursor *_cursor;
+	Actor *_actor;
+	Handle *_handle;
 	Config *_config;
+	Scroll *_scroll;
+	Dialogs *_dialogs;
 
 	KEYFPTR _keyHandler;
 

@@ -32,17 +32,13 @@ ReadChoiceController::ReadChoiceController(const Common::String &choices) :
 }
 
 bool ReadChoiceController::keyPressed(int key) {
-	// Common::isUpper() accepts 1-byte characters, yet the modifier keys
-	// (ALT, SHIFT, ETC) produce values beyond 255
-	if ((key <= 0x7F) && (Common::isUpper(key)))
-		key = tolower(key);
-
-	_value = key;
+	const char c = tolower(key & 0xFF);
+	_value = c;
 
 	if (_choices.empty() || _choices.findFirstOf(_value) < _choices.size()) {
 		// If the value is printable, display it
-		if (!Common::isSpace(key))
-			g_screen->screenMessage("%c", toupper(key));
+		if (!Common::isSpace(c))
+			g_screen->screenMessage("%c", toupper(c));
 		doneWaiting();
 		return true;
 	}

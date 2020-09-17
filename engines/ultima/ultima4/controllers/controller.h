@@ -28,6 +28,21 @@
 namespace Ultima {
 namespace Ultima4 {
 
+enum Ultima4KeyCodes {
+	kUltimaKeyBackspace = 0x0E08,
+	kUltimaKeyReturn    = 0x1C0D,
+	kUltimaKeySpace     = 0x3920,
+	kUltimaKeyDelete    = 0x0E7F,
+
+	kUltimaKeyUp        = 0x4800,
+	kUltimaKeyLeft      = 0x4B00,
+	kUltimaKeyRight     = 0x4D00,
+	kUltimaKeyDown      = 0x5000,
+
+	kUltimaKeyF5        = 0x3F00,
+	kUltimaKeyF7        = 0x4100
+};
+
 /**
  * A generic controller base class.  Controllers are classes that
  * contain the logic for responding to external events (e.g. keyboard,

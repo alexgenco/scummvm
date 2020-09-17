@@ -6,10 +6,19 @@ For a more comprehensive changelog of the latest experimental code, see:
  General:
    - Switched ScummVM GUI output to UTF-32.
 
+ SAGA:
+   - Added support for ITE GOG Mac CD v1.1.
+
+ Tinsel:
+   - Enabled the Return to Launcher feature.
+
  Supernova:
    - Added Italian translation for part 1.
 
-#### 2.2.0 (2020-09-27)
+ Xeen:
+   - Fixed occasional border corruption during fights.
+
+#### 2.2.0 "Interactive Fantasy" (2020-09-27)
 
  New games:
    - Added support for Blazing Dragons.

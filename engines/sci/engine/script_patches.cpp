@@ -1735,9 +1735,35 @@ static const uint16 fanmadePatchDemoQuestInfiniteLoop[] = {
 	PATCH_END
 };
 
+// This patch is for a bug that first appeared in the LSL3 volume dialog and was
+//  then copied into the templates included with SCI Studio and SCI Companion,
+//  causing it to appear in fan games. See larry3SignatureVolumeSlider.
+//
+// Applies to: Fan games built with the SCI Studio / SCI Companion SCI0 template
+// Responsible method: TheMenuBar:handleEvent
+static const uint16 fangameSignatureVolumeSlider[] = {
+	0x39, SIG_SELECTOR8(doit),       // pushi doit
+	SIG_ADDTOOFFSET(+1),             // push1 [ opcode 79 instead of 78 in some games ]
+	SIG_ADDTOOFFSET(+1),             // push2 [ opcode 7b instead of 7a in some games ]
+	SIG_MAGICDWORD,
+	0x39, 0x08,                      // pushi 08 [ volume ]
+	0x8d, 0x03,                      // lst 03   [ uninitialized variable ]
+	0x43, 0x31, 0x04,                // callk DoSound 04 [ set volume and return previous ]
+	SIG_END
+};
+
+static const uint16 fangamePatchVolumeSlider[] = {
+	PATCH_ADDTOOFFSET(+3),
+	0x39, 0x01,                      // pushi 01
+	0x38, PATCH_UINT16(0x0008),      // pushi 0008 [ volume ]
+	0x43, 0x31, 0x02,                // callk DoSound 02 [ return volume ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                                  patch
 static const SciScriptPatcherEntry fanmadeSignatures[] = {
 	{  true,   994, "Cascade Quest: fix auto-saving",              1, fanmadeSignatureCascadeQuestFixAutoSaving, fanmadePatchCascadeQuestFixAutoSaving },
+	{  true,   997, "SCI Template: fix volume slider",             1, fangameSignatureVolumeSlider,              fangamePatchVolumeSlider },
 	{  true,   999, "Demo Quest: infinite loop on typo",           1, fanmadeSignatureDemoQuestInfiniteLoop,     fanmadePatchDemoQuestInfiniteLoop },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
@@ -3617,6 +3643,79 @@ static const uint16 gk1ExitFeatureCursorPatch[] = {
 	PATCH_END
 };
 
+// The Windows CD version never plays its AVI videos during the bayou ritual,
+//  instead it runs the view-based slide shows for the floppy versions. The
+//  ritual script contains the normal code for playing its AVI and SEQ files
+//  depending on kPlatform, just like every video script in the game, except
+//  that the initial floppy flag test has been replaced with another kPlatform
+//  call which prevents the real platform test from executing.
+//
+// It's unclear if this is a script bug or why it would be intentional, but
+//  the end result is that selecting Windows as the platform excludes videos
+//  from this one scene whereas selecting DOS doesn't, so we patch the platform
+//  tests back to floppy tests like everywhere else and enable the AVI videos.
+//
+// Applies to: All CD versions, though only English versions support Windows
+// Responsible method: roomScript:changeState
+// Fixes bug: #9807
+static const uint16 gk1BayouRitualAviSignature[] = {
+	0x76,                                   // push0
+	0x43, 0x68, SIG_UINT16(0x0000),         // callk Platform
+	SIG_MAGICDWORD,
+	0x36,                                   // push
+	0x35, 0x01,                             // ldi 01 [ DOS ]
+	0x1c,                                   // ne?
+	SIG_END
+};
+
+static const uint16 gk1BayouRitualAviPatch[] = {
+	0x78,                                   // push1
+	0x38, PATCH_UINT16(0x01d6),             // pushi 01d6     [ flag 470 ]
+	0x47, 0x0d, 0x00, PATCH_UINT16(0x0002), // calle proc13_0 [ is floppy flag set? ]
+	PATCH_END
+};
+
+// On day 6, an envelope is dropped off in the bookstore after 20 seconds, but
+//  if the game is in the middle of a message sequence then it can lockup.
+//  When a timer expires, bookstore:cue tests a number of properties to make
+//  sure that it's not interrupting anything, but unlike other rooms such as
+//  nwJackson:cue it doesn't test if a message is being said. Looking at Grace
+//  triggers one of many message sequences which can prevent ego from completing
+//  his turn to face the door, leaving dropTheEnvelope stuck in handsOff mode.
+//
+// We fix this by adding a test to bookstore:cue to verify that a message isn't
+//  being said, just like nwJackson:cue. We make room for this by overwriting a
+//  redundant handsOff call. This also prevents the florist script from starting
+//  in the middle of a message, as this could have similar conflicts.
+//
+// Applies to: All versions
+// Responsible method: bookstore:cue
+static const uint16 gk1Day6EnvelopeSignature[] = {
+	SIG_MAGICDWORD,
+	0x39, SIG_SELECTOR8(state),             // pushi state
+	0x76,                                   // push0
+	0x51, SIG_ADDTOOFFSET(+1),              // class CueObj
+	0x4a, SIG_UINT16(0x0004),               // send 04 [ CueObj state? ]
+	0x18,                                   // not
+	0x31, SIG_ADDTOOFFSET(+1),              // bnt [ reset timer ]
+	0x38, SIG_SELECTOR16(handsOff),         // pushi handsOff
+	0x76,                                   // push0
+	0x81, 0x01,                             // lag 01
+	0x4a, SIG_UINT16(0x0004),               // send 04 [ GK1 handsOff: ]
+	SIG_END
+};
+
+static const uint16 gk1Day6EnvelopePatch[] = {
+	PATCH_ADDTOOFFSET(+8),
+	0x2f, PATCH_GETORIGINALBYTEADJUST(+10, +1), // bt [ reset timer ]
+	0x39, PATCH_SELECTOR8(size),                // pushi size
+	0x76,                                       // push0
+	0x81, 0x54,                                 // lag 54
+	0x4a, PATCH_UINT16(0x0004),                 // send 04 [ talkers size? ]
+	0x2f, PATCH_GETORIGINALBYTEADJUST(+10, -9), // bt [ reset timer ]
+	PATCH_END
+};
+
 // GK1 Mac is missing view 56, which is the close-up of the talisman. Clicking
 //  Look on the talisman from inventory is supposed to display an inset with
 //  view 56 and say a message, but instead this would crash the Mac interpreter.
@@ -3684,6 +3783,7 @@ static const SciScriptPatcherEntry gk1Signatures[] = {
 	{  false,   24, "mac: fix missing talisman view",              1, gk1MacTalismanInsetSignature,     gk1MacTalismanInsetPatch },
 	{  true,    51, "fix interrogation bug",                       1, gk1InterrogationBugSignature,     gk1InterrogationBugPatch },
 	{  true,    93, "fix inventory on restart",                    1, gk1RestartInventorySignature,     gk1RestartInventoryPatch },
+	{  true,   210, "fix day 6 envelope lockup",                   2, gk1Day6EnvelopeSignature,         gk1Day6EnvelopePatch },
 	{  true,   211, "fix day 1 grace phone speech timing",         1, gk1Day1GracePhoneSignature,       gk1Day1GracePhonePatch },
 	{  true,   212, "fix day 5 drum book dialogue error",          1, gk1Day5DrumBookDialogueSignature, gk1Day5DrumBookDialoguePatch },
 	{  true,   212, "fix day 5 phone softlock",                    1, gk1Day5PhoneFreezeSignature,      gk1Day5PhoneFreezePatch },
@@ -3702,6 +3802,7 @@ static const SciScriptPatcherEntry gk1Signatures[] = {
 	{  true,   410, "fix day 2 binoculars lockup",                 1, gk1Day2BinocularsLockupSignature, gk1Day2BinocularsLockupPatch },
 	{  true,   420, "fix day 6 empty booth message",               6, gk1EmptyBoothMessageSignature,    gk1EmptyBoothMessagePatch },
 	{  true,   420, "fix lorelei dance timer",                     1, gk1LoreleiDanceTimerSignature,    gk1LoreleiDanceTimerPatch },
+	{  true,   480, "win: play day 6 bayou ritual avi videos",     3, gk1BayouRitualAviSignature,       gk1BayouRitualAviPatch },
 	{  true,   710, "fix day 9 vine swing speech playing",         1, gk1Day9VineSwingSignature,        gk1Day9VineSwingPatch },
 	{  true,   710, "fix day 9 mummy animation (floppy)",          1, gk1MummyAnimateFloppySignature,   gk1MummyAnimateFloppyPatch },
 	{  true,   710, "fix day 9 mummy animation (cd)",              1, gk1MummyAnimateCDSignature,       gk1MummyAnimateCDPatch },
@@ -6964,6 +7065,46 @@ static const uint16 larry2PatchWearParachutePoints[] = {
 //          script, description,                                      signature                           patch
 static const SciScriptPatcherEntry larry2Signatures[] = {
 	{  true,    63, "plane: no points for wearing parachute",      1, larry2SignatureWearParachutePoints, larry2PatchWearParachutePoints },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+// ===========================================================================
+// Leisure Suit Larry 3
+
+// The LSL3 volume dialog initialize its slider to the current volume by calling
+//  kDoSoundMasterVolume, but it passes an uninitialized variable as an extra
+//  parameter. This changes the volume instead of just querying it, leaving the
+//  slider out of sync with the abruptly changed volume.
+//
+// We remove the uninitialized parameter so that this code correctly queries the
+//  volume instead of setting it. This was fixed in later versions but the buggy
+//  one was used as the basis for SCI Studio's template script, which is also
+//  included with SCI Companion, and so this bug lives on in fan games.
+//
+// Applies to: English PC, English Amiga, English Atari ST
+// Responsible method: TheMenuBar:handleEvent
+static const uint16 larry3SignatureVolumeSlider[] = {
+	SIG_MAGICDWORD,
+	0x39, SIG_SELECTOR8(doit),       // pushi doit
+	0x78,                            // push1
+	0x7a,                            // push2
+	0x39, 0x08,                      // pushi 08 [ volume ]
+	0x8d, 0x01,                      // lst 01   [ uninitialized variable ]
+	0x43, 0x31, 0x04,                // callk DoSound 04 [ set volume and return previous ]
+	SIG_END
+};
+
+static const uint16 larry3PatchVolumeSlider[] = {
+	PATCH_ADDTOOFFSET(+3),
+	0x39, 0x01,                      // pushi 01
+	0x38, PATCH_UINT16(0x0008),      // pushi 0008 [ volume ]
+	0x43, 0x31, 0x02,                // callk DoSound 02 [ return volume ]
+	PATCH_END
+};
+
+//          script, description,                                      signature                     patch
+static const SciScriptPatcherEntry larry3Signatures[] = {
+	{  true,   997, "fix volume slider",                           1, larry3SignatureVolumeSlider,  larry3PatchVolumeSlider },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -20251,6 +20392,9 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 		break;
 	case GID_LSL2:
 		signatureTable = larry2Signatures;
+		break;
+	case GID_LSL3:
+		signatureTable = larry3Signatures;
 		break;
 	case GID_LSL5:
 		signatureTable = larry5Signatures;

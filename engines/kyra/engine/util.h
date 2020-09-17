@@ -36,7 +36,6 @@ public:
 	// conversion functionallty uses that as a base.
 	static void convertDOSToISO(char *str);
 	static void convertISOToDOS(char *str);
-	static void convertISOToDOS(char &c);
 
 private:
 	static const uint8 _charMapDOSToISO[128];

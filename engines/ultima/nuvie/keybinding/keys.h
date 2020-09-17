@@ -57,8 +57,6 @@ typedef Std::map<Common::String, const void *> ParseActionMap;
 
 class Configuration;
 
-char get_ascii_char_from_keysym(Common::KeyState keysym);
-
 class KeyBinder {
 private:
 	KeyMap _bindings;

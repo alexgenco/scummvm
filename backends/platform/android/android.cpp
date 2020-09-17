@@ -311,16 +311,22 @@ void OSystem_Android::initBackend() {
 	ConfMan.registerDefault("aspect_ratio", true);
 	ConfMan.registerDefault("touchpad_mouse_mode", true);
 	ConfMan.registerDefault("onscreen_control", true);
-	// The swap_menu_and_back is a legacy configuration key
+	// The swap_menu_and_back is a deprecated configuration key
 	// It is no longer relevant, after introducing the keymapper functionality
 	// since the behaviour of the menu and back buttons is now handled by the keymapper.
-	// The key is thus registered to default to a "false" value
-	ConfMan.registerDefault("swap_menu_and_back", false);
+	// We now ignore it completely
 
 	ConfMan.registerDefault("autosave_period", 0);
 	ConfMan.setBool("FM_high_quality", false);
 	ConfMan.setBool("FM_medium_quality", true);
 
+	// we need a relaxed delay for the remapping timeout since handling touch interface and virtual keyboard can be slow
+	// and especially in some occasions when we need to pull down (hide) the keyboard and map a system key (like the AC_Back) button.
+	// 8 seconds should be enough
+	ConfMan.registerDefault("remap_timeout_delay_ms", 8000);
+	if (!ConfMan.hasKey("remap_timeout_delay_ms")) {
+		ConfMan.setInt("remap_timeout_delay_ms", 8000);
+	}
 
 	if (!ConfMan.hasKey("browser_lastpath")) {
 		// TODO remove the debug message eventually
@@ -328,10 +334,12 @@ void OSystem_Android::initBackend() {
 		ConfMan.set("browser_lastpath", "/");
 	}
 
-	if (ConfMan.hasKey("touchpad_mouse_mode"))
+	if (ConfMan.hasKey("touchpad_mouse_mode")) {
 		_touchpad_mode = ConfMan.getBool("touchpad_mouse_mode");
-	else
+	} else {
 		ConfMan.setBool("touchpad_mouse_mode", true);
+		_touchpad_mode = true;
+	}
 
 	if (ConfMan.hasKey("onscreen_control"))
 		JNI::showKeyboardControl(ConfMan.getBool("onscreen_control"));
@@ -341,6 +349,11 @@ void OSystem_Android::initBackend() {
 	// BUG: "transient" ConfMan settings get nuked by the options
 	// screen. Passing the savepath in this way makes it stick
 	// (via ConfMan.registerDefault)
+	// Note: The aforementioned bug is probably the one reported here:
+	//  https://bugs.scummvm.org/ticket/3712
+	//  and maybe here:
+	//  https://bugs.scummvm.org/ticket/7389
+	// TODO is this right to save full path?
 	_savefileManager = new DefaultSaveFileManager(ConfMan.get("savepath"));
 	// TODO remove the debug message eventually
 	LOGD("Setting DefaultSaveFileManager path to: %s", ConfMan.get("savepath").c_str());
@@ -425,18 +438,37 @@ Common::KeymapperDefaultBindings *OSystem_Android::getKeymapperDefaultBindings()
 	Common::KeymapperDefaultBindings *keymapperDefaultBindings = new Common::KeymapperDefaultBindings();
 
 	// The swap_menu_and_back is a legacy configuration key
-	// It is only checked here for compatibility with old config files
-	// where it may have been set as "true"
-	// TODO Why not just ignore it entirely anyway?
-	if (ConfMan.hasKey("swap_menu_and_back")  && ConfMan.getBool("swap_menu_and_back")) {
-		keymapperDefaultBindings->setDefaultBinding(Common::kGlobalKeymapName, "MENU", "AC_BACK");
-		keymapperDefaultBindings->setDefaultBinding("engine-default", Common::kStandardActionSkip, "MENU");
-		keymapperDefaultBindings->setDefaultBinding(Common::kGuiKeymapName, "CLOS", "MENU");
-	} else {
-		keymapperDefaultBindings->setDefaultBinding(Common::kGlobalKeymapName, "MENU", "MENU");
-		keymapperDefaultBindings->setDefaultBinding("engine-default", Common::kStandardActionSkip, "AC_BACK");
-		keymapperDefaultBindings->setDefaultBinding(Common::kGuiKeymapName, "CLOS", "AC_BACK");
-	}
+	// We now ignore it entirely (it as always false -- ie. back short press is AC_BACK)
+
+	//
+	// Note: setDefaultBinding maps a hw input to a keymapId_actionId combo.
+	//
+	// Clarifications/Quote by developer bgK (via Discord, Oct 3, 2020)
+	// bgK: [With the introduction of the ScummVM keymapper we have] "standard actions" defined in "standard-actions.h".
+	//      The engines use those as much as possible when defining keymaps.
+	//      Then, the backends can override the default bindings to make use of the platform specific keys.
+	//
+	//
+	keymapperDefaultBindings->setDefaultBinding(Common::kGlobalKeymapName, "MENU", "MENU");
+	//
+	// We want the AC_BACK key to be the default (until overridden explicitly by the user or a game engine)
+	// mapped key for the standard SKIP action.
+	//
+	// bgK: "engine-default" is for the default keymap used by games that don't define their own keymap.
+	//      [We] want Common::kStandardActionsKeymapName to override the action for all the keymaps
+	//      Common::kStandardActionsKeymapName is used as a fallback if there are no keymap specific bindings defined.
+	//      So it should be enough on its own.
+	// [ie. we don't have to set default binding for "engine-default", as well]
+	// ["engine-default" is used for to create a Keymap sequence of type kKeymapTypeGame in engines/metaengine.cpp initKeymaps() for an engine]
+	// [In initKeymaps() is where the default key Esc is mapped to Skip action for game engines]
+	//
+	// [kStandardActionsKeymapName is defined  as (constant char*) in ./backends/keymapper/keymap, and utilised in getActionDefaultMappings()]
+	// ["If no keymap-specific default mapping was found, look for a standard action binding"]
+	keymapperDefaultBindings->setDefaultBinding(Common::kStandardActionsKeymapName, Common::kStandardActionSkip, "AC_BACK");
+
+	// The "CLOS" action ID is not a typo.
+	// See: backends/keymapper/remap-widget.cpp:	kCloseCmd        = 'CLOS'
+	keymapperDefaultBindings->setDefaultBinding(Common::kGuiKeymapName, "CLOS", "AC_BACK");
 
 	return keymapperDefaultBindings;
 }

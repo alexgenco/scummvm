@@ -7,10 +7,19 @@ Programmcodes finden Sie auf Englisch unter:
  Allgemein:
    - Die ScummVM-Benutzeroberfläche unterstützt nun UTF-32.
 
+ SAGA:
+   - Unterstützung für ITE GOG Mac CD v1.1 hinzugefügt.
+
+ Tinsel:
+   - Unterstützung für die Rückkehr zur ScummVM-Benutzeroberfläche hinzugefügt.
+
  Supernova:
    - Teil 1 von Supernova ist nun in einer italienischen Übersetzung verfügbar.
 
-#### 2.2.0 (27.09.2020)
+ Xeen:
+   - Gelegentliche Grafikfehler in Kampf-Szenen korrigiert.
+
+#### 2.2.0 "Interactive Fantasy" (27.09.2020)
 
  Neue Spiele:
    - Unterstützung für Blazing Dragons hinzugefügt.

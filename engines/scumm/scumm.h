@@ -104,61 +104,6 @@ enum {
 	NUM_SHADOW_PALETTE = 8
 };
 
-/**
- * SCUMM feature flags define for every game which specific set of engine
- * features are used by that game.
- * Note that some of them could be replaced by checks for the SCUMM version.
- */
-enum GameFeatures {
-	/** A demo, not a full blown game. */
-	GF_DEMO                = 1 << 0,
-
-	/** Games with the AKOS costume system (ScummEngine_v7 and subclasses, HE games). */
-	GF_NEW_COSTUMES        = 1 << 2,
-
-	/** Games using XOR encrypted data files. */
-	GF_USE_KEY             = 1 << 4,
-
-	/** Small header games (ScummEngine_v4 and subclasses). */
-	GF_SMALL_HEADER        = 1 << 5,
-
-	/** Old bundle games (ScummEngine_v3old and subclasses). */
-	GF_OLD_BUNDLE          = 1 << 6,
-
-	/** EGA games. */
-	GF_16COLOR             = 1 << 7,
-
-	/** VGA versions of V3 games.  Equivalent to (version == 3 && not GF_16COLOR) */
-	GF_OLD256              = 1 << 8,
-
-	/** Games which have Audio CD tracks. */
-	GF_AUDIOTRACKS         = 1 << 9,
-
-	/**
-	 * Games using only very few local variables in scripts.
-	 * Apparently that is only the case for 256 color version of Indy3.
-	 */
-	GF_FEW_LOCALS          = 1 << 11,
-
-	/** HE games for which localized versions exist */
-	GF_HE_LOCALIZED        = 1 << 13,
-
-	/**
-	 *  HE games with more global scripts and different sprite handling
-	 *  i.e. read it as HE version 9.85. Used for HE98 only.
-	 */
-	GF_HE_985             = 1 << 14,
-
-	/** HE games with 16 bit color */
-	GF_16BIT_COLOR         = 1 << 15,
-
-	/**
-	 * SCUMM v5-v7 Mac games stored in a container file
-	 * Used to differentiate between m68k and PPC versions of Indy4
-	 */
-	GF_MAC_CONTAINER       = 1 << 16
-};
-
 /* SCUMM Debug Channels */
 void debugC(int level, const char *s, ...) GCC_PRINTF(2, 3);
 
@@ -219,46 +164,66 @@ enum {
 	MBS_MAX_KEY	= 0x0200
 };
 
-enum ScummGameId {
-	GID_CMI,
-	GID_DIG,
-	GID_FT,
-	GID_INDY3,
-	GID_INDY4,
-	GID_LOOM,
-	GID_MANIAC,
-	GID_MONKEY_EGA,
-	GID_MONKEY_VGA,
-	GID_MONKEY,
-	GID_MONKEY2,
-	GID_PASS,
-	GID_SAMNMAX,
-	GID_TENTACLE,
-	GID_ZAK,
+enum ScummKeyCode {
+	SCUMM_KEY_CTRL_C           = 3,
+	SCUMM_KEY_BACKSPACE        = 8,
+	SCUMM_KEY_TAB              = 9,
+	SCUMM_KEY_CTRL_L           = 12,
+	SCUMM_KEY_RETURN           = 13,
+	SCUMM_KEY_CTRL_Q           = 17,
+	SCUMM_KEY_CTRL_R           = 18,
+	SCUMM_KEY_CTRL_S           = 19,
+	SCUMM_KEY_CTRL_T           = 20,
+	SCUMM_KEY_CTRL_V           = 22,
+	SCUMM_KEY_ESCAPE           = 27,
 
-	GID_HEGAME,      // Generic name for all HE games with default behavior
-	GID_PUTTDEMO,
-	GID_FBEAR,
-	GID_PUTTMOON,
-	GID_FUNPACK,
-	GID_PUTTZOO,
-	GID_FREDDI3,
-	GID_BIRTHDAYRED,
-	GID_BIRTHDAYYELLOW,
-	GID_TREASUREHUNT,
-	GID_PUTTRACE,
-	GID_FUNSHOP,	// Used for all three funshops
-	GID_FOOTBALL,
-	GID_FOOTBALL2002,
-	GID_SOCCER,
-	GID_SOCCERMLS,
-	GID_SOCCER2004,
-	GID_BASEBALL2001,
-	GID_BASEBALL2003,
-	GID_BASKETBALL,
-	GID_MOONBASE,
-	GID_PJGAMES,
-	GID_HECUP		// CUP demos
+	SCUMM_KEY_PAUSE            = ' ',
+	SCUMM_KEY_TALK_STOP        = '.',
+	SCUMM_KEY_SHIFT_S          = 'S',
+
+	SCUMM_KEY_MUSIC_VOLUME_DEC = '[',
+	SCUMM_KEY_MUSIC_VOLUME_INC = ']',
+
+	SCUMM_KEY_TEXT_SPEED_DEC   = '-',
+	SCUMM_KEY_TEXT_SPEED_INC   = '+',
+
+	SCUMM_KEY_ALT_Q            = 272,
+	SCUMM_KEY_ALT_I            = 279,
+	SCUMM_KEY_ALT_S            = 287,
+	SCUMM_KEY_ALT_X            = 301,
+
+	SCUMM_KEY_F1               = 315,
+	SCUMM_KEY_F2               = 316,
+	SCUMM_KEY_F3               = 317,
+	SCUMM_KEY_F4               = 318,
+	SCUMM_KEY_F5               = 319,
+	SCUMM_KEY_F6               = 320,
+	SCUMM_KEY_F7               = 321,
+	SCUMM_KEY_F8               = 322,
+	SCUMM_KEY_F9               = 323,
+	SCUMM_KEY_F10              = 324,
+	SCUMM_KEY_F11              = 325,
+	SCUMM_KEY_F12              = 326,
+
+	SCUMM_KEY_KP7              = 327,
+	SCUMM_KEY_KP8              = 328,
+	SCUMM_KEY_KP9              = 329,
+	SCUMM_KEY_KP4              = 331,
+	SCUMM_KEY_KP5              = 332,
+	SCUMM_KEY_KP6              = 333,
+	SCUMM_KEY_KP1              = 335,
+	SCUMM_KEY_KP2              = 336,
+	SCUMM_KEY_KP3              = 337,
+
+	SCUMM_KEY_SHIFT_F1         = 340,
+	SCUMM_KEY_SHIFT_F7         = 346,
+	SCUMM_KEY_CTRL_F5          = 354,
+	SCUMM_KEY_ALT_F5           = 364,
+
+	SEGACD_KEY_UP              = 54,
+	SEGACD_KEY_DOWN            = 55,
+	SEGACD_KEY_RIGHT           = 56,
+	SEGACD_KEY_LEFT            = 57
 };
 
 struct SentenceTab {
@@ -460,7 +425,7 @@ protected:
 	int getTalkSpeed();
 
 	// Scumm main loop & helper functions.
-	virtual void scummLoop(int delta);
+	virtual void scummLoop(byte delta);
 	virtual void scummLoop_updateScummVars();
 	virtual void scummLoop_handleSaveLoad();
 	virtual void scummLoop_handleDrawing();
@@ -472,14 +437,26 @@ protected:
 
 	// Event handling
 public:
+	uint16 getKey(const Common::KeyState &lastKeyHit) const;
 	void parseEvents();	// Used by IMuseDigital::startSound
 protected:
 	virtual void parseEvent(Common::Event event);
 
-	void waitForTimer(int msec_delay);
+	void waitForTimer(uint16 delay);
+	double getTimerFrequency() const;
+	double _msecFractionalParts;
+	uint32 _lastWaitTime;
+
 	virtual void processInput();
-	virtual void processKeyboard(Common::KeyState lastKeyHit);
+	virtual void processKeyboard();
 	virtual void clearClickedStatus();
+
+	void mapKeysForSegaCD(const Common::KeyState &lastKeyHit);
+
+	bool isOriginalMenuKey() const;
+	bool isMainMenuKey() const;
+	bool isRestartKey() const;
+	bool isCutsceneExitKey() const;
 
 	// Cursor/palette
 	void updateCursor();
@@ -578,13 +555,14 @@ public:
 
 protected:
 	Common::KeyState _keyPressed;
-	bool _keyDownMap[512]; // FIXME - 512 is a guess. it's max(kbd.ascii)
+	bool _keyDownMap[Common::KEYCODE_LAST];
 
 	Common::Point _mouse;
 	Common::Point _virtualMouse;
 
 	uint16 _mouseAndKeyboardStat;
 	byte _leftBtnPressed, _rightBtnPressed;
+	bool _scrollWheelUp, _scrollWheelDown;
 
 	/**
 	 * Last time runInputScript was run (measured in terms of OSystem::getMillis()).

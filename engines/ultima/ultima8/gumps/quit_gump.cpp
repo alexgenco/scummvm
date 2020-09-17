@@ -177,14 +177,11 @@ void QuitGump::ChildNotify(Gump *child, uint32 message) {
 	}
 }
 
-bool QuitGump::OnTextInput(int unicode) {
-	if (!(unicode & 0xFF80)) {
-		char c = unicode & 0x7F;
-		if (_TL_("Yy").find(c) != Std::string::npos) {
-			Ultima8Engine::get_instance()->quitGame();
-		} else if (_TL_("Nn").find(c) != Std::string::npos) {
-			Close();
-		}
+bool QuitGump::OnTextInput(char c) {
+	if (_TL_("Yy").find(c) != Std::string::npos) {
+		Ultima8Engine::get_instance()->quitGame();
+	} else if (_TL_("Nn").find(c) != Std::string::npos) {
+		Close();
 	}
 	return true;
 }

@@ -37,20 +37,16 @@
 #include "graphics/managed_surface.h"
 #include "graphics/thumbnail.h"
 
-const char *MetaEngine::getSavegameFile(int saveGameIdx, const char *target) const {
-	static char buffer[200];
-
-	snprintf(buffer, sizeof(buffer), "%s.s%02d", target == nullptr ? getEngineId() : target, saveGameIdx);
-
-	return buffer;
-}
-
-const char *MetaEngine::getSavegamePattern(const char *target) const {
-	static char buffer[200];
-
-	snprintf(buffer, sizeof(buffer), "%s.s##", target == nullptr ? getEngineId() : target);
-
-	return buffer;
+Common::String MetaEngine::getSavegameFile(int saveGameIdx, const char *target) const {
+	if (saveGameIdx == kSavegameFilePattern) {
+		// Pattern requested
+		const char *pattern = hasFeature(kSavesUseExtendedFormat) ? "%s.###" : "%s.s##";
+		return Common::String::format(pattern, target == nullptr ? getEngineId() : target);
+	} else {
+		// Specific filename requested
+		const char *pattern = hasFeature(kSavesUseExtendedFormat) ? "%s.%03d" : "%s.s%02d";
+		return Common::String::format(pattern, target == nullptr ? getEngineId() : target, saveGameIdx);
+	}
 }
 
 Common::KeymapArray MetaEngine::initKeymaps(const char *target) const {
@@ -80,53 +76,56 @@ Common::KeymapArray MetaEngine::initKeymaps(const char *target) const {
 	act = new Action(kStandardActionPause, _("Pause"));
 	act->setKeyEvent(KeyState(KEYCODE_SPACE, ' '));
 	act->addDefaultInputMapping("SPACE");
+	act->allowKbdRepeats();
 	engineKeyMap->addAction(act);
 
 	act = new Action(kStandardActionOpenMainMenu, _("Game menu"));
-	act->setKeyEvent(KeyState(KEYCODE_F5, ASCII_F5));
+	act->setKeyEvent(KEYCODE_F5);
 	act->addDefaultInputMapping("F5");
 	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
+	act->allowKbdRepeats();
 	engineKeyMap->addAction(act);
 
 	act = new Action(kStandardActionSkip, _("Skip"));
 	act->setKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE));
 	act->addDefaultInputMapping("ESCAPE");
 	act->addDefaultInputMapping("JOY_Y");
-	engineKeyMap->addAction(act);
-
-	act = new Action("SKLI", _("Skip line"));
-	act->setKeyEvent(KeyState(KEYCODE_PERIOD, '.'));
-	act->addDefaultInputMapping("PERIOD");
-	act->addDefaultInputMapping("JOY_X");
+	act->allowKbdRepeats();
 	engineKeyMap->addAction(act);
 
 	act = new Action("PIND", _("Predictive input dialog"));
 	act->setEvent(EVENT_PREDICTIVE_DIALOG);
+	act->allowKbdRepeats();
 	engineKeyMap->addAction(act);
 
 	act = new Action("RETURN", _("Confirm"));
 	act->setKeyEvent(KeyState(KEYCODE_RETURN, ASCII_RETURN));
 	act->addDefaultInputMapping("RETURN");
+	act->allowKbdRepeats();
 	engineKeyMap->addAction(act);
 
 	act = new Action(kStandardActionMoveUp, _("Up"));
 	act->setKeyEvent(KEYCODE_KP8);
 	act->addDefaultInputMapping("JOY_UP");
+	act->allowKbdRepeats();
 	engineKeyMap->addAction(act);
 
 	act = new Action(kStandardActionMoveDown, _("Down"));
 	act->setKeyEvent(KEYCODE_KP2);
 	act->addDefaultInputMapping("JOY_DOWN");
+	act->allowKbdRepeats();
 	engineKeyMap->addAction(act);
 
 	act = new Action(kStandardActionMoveLeft, _("Left"));
 	act->setKeyEvent(KEYCODE_KP4);
 	act->addDefaultInputMapping("JOY_LEFT");
+	act->allowKbdRepeats();
 	engineKeyMap->addAction(act);
 
 	act = new Action(kStandardActionMoveRight, _("Right"));
 	act->setKeyEvent(KEYCODE_KP6);
 	act->addDefaultInputMapping("JOY_RIGHT");
+	act->allowKbdRepeats();
 	engineKeyMap->addAction(act);
 
 	return Keymap::arrayOf(engineKeyMap);
@@ -264,9 +263,9 @@ WARN_UNUSED_RESULT bool MetaEngine::readSavegameHeader(Common::InSaveFile *in, E
 }
 
 
-///////////////////////////////////////
-// MetaEngine default implementations
-///////////////////////////////////////
+//////////////////////////////////////////////
+// MetaEngineConnect default implementations
+//////////////////////////////////////////////
 
 SaveStateList MetaEngine::listSaves(const char *target) const {
 	if (!hasFeature(kSavesUseExtendedFormat))
@@ -274,7 +273,7 @@ SaveStateList MetaEngine::listSaves(const char *target) const {
 
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
-	Common::String pattern(getSavegamePattern(target));
+	Common::String pattern(getSavegameFilePattern(target));
 
 	filenames = saveFileMan->listSavefiles(pattern);
 
@@ -338,7 +337,7 @@ SaveStateList MetaEngine::listSaves(const char *target, bool saveMode) const {
 	return saveList;
 }
 
-void MetaEngine::registerDefaultSettings(const Common::String &) const {
+void MetaEngineStatic::registerDefaultSettings(const Common::String &) const {
 	// Note that as we don't pass the target to getExtraGuiOptions
 	//  we get all the options, even those not relevant for the current
 	//  game. This is necessary because some engines unconditionally
@@ -349,7 +348,16 @@ void MetaEngine::registerDefaultSettings(const Common::String &) const {
 	}
 }
 
-GUI::OptionsContainerWidget *MetaEngine::buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
+GUI::OptionsContainerWidget *MetaEngineStatic::buildEngineOptionsWidgetStatic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
+	const ExtraGuiOptions engineOptions = getExtraGuiOptions(target);
+	if (engineOptions.empty()) {
+		return nullptr;
+	}
+
+	return new GUI::ExtraGuiOptionsWidget(boss, name, target, engineOptions);
+}
+
+GUI::OptionsContainerWidget *MetaEngine::buildEngineOptionsWidgetDynamic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
 	const ExtraGuiOptions engineOptions = getExtraGuiOptions(target);
 	if (engineOptions.empty()) {
 		return nullptr;

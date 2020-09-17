@@ -43,9 +43,7 @@ namespace Common {
 const KeyTableEntry defaultKeys[] = {
 	{"BACKSPACE", KEYCODE_BACKSPACE, "Backspace"},
 	{"TAB", KEYCODE_TAB, "Tab"},
-	{"CLEAR", KEYCODE_CLEAR, "Clear"},
 	{"RETURN", KEYCODE_RETURN, "Return"},
-	{"PAUSE", KEYCODE_PAUSE, "Pause"},
 	{"ESCAPE", KEYCODE_ESCAPE, "Esc"},
 	{"SPACE", KEYCODE_SPACE, "Space"},
 	{"EXCLAIM", KEYCODE_EXCLAIM, "!"},
@@ -169,12 +167,11 @@ const KeyTableEntry defaultKeys[] = {
 	{"HELP", KEYCODE_HELP, "Help"},
 	{"PRINT", KEYCODE_PRINT, "Print"},
 	{"SYSREQ", KEYCODE_SYSREQ, "SysRq"},
-	{"BREAK", KEYCODE_BREAK, "Break"},
+	{"PAUSE", KEYCODE_PAUSE, "Pause"},
 	{"MENU", KEYCODE_MENU, "Menu"},
 		// Power Macintosh power key
 	{"POWER", KEYCODE_POWER, "Power"},
-		// Some european keyboards
-	{"EURO", KEYCODE_EURO, "Euro"},
+	{"CLEAR", KEYCODE_CLEAR, "Clear"},
 		// Atari keyboard has Undo
 	{"UNDO", KEYCODE_UNDO, "Undo"},
 	{"SLEEP", KEYCODE_SLEEP, "Sleep"},
@@ -378,11 +375,6 @@ HardwareInput KeyboardHardwareInputSet::findHardwareInput(const Event &event) co
 
 KeyState KeyboardHardwareInputSet::normalizeKeyState(const KeyState &keystate) {
 	KeyState normalizedKeystate = keystate;
-
-	// We ignore the sticky modifiers as they traditionally
-	// have no impact on the outcome of key presses.
-	// TODO: Maybe Num Lock should act as a modifier for the keypad.
-	normalizedKeystate.flags &= ~KBD_STICKY;
 
 	// Modifier keypresses ignore the corresponding modifier flag.
 	// That way, for example, `Left Shift` is not identified

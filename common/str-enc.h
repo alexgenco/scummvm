@@ -23,26 +23,12 @@
 #ifndef COMMON_STRING_ENCODING_H
 #define COMMON_STRING_ENCODING_H
 
+#include "common/codepages.h"
+
 namespace Common {
 
 class String;
 class U32String;
-
-enum CodePage {
-	kCodePageInvalid = -1,
-	kUtf8 = 0,
-	kWindows1250,
-	kWindows1251,
-	kWindows1252,
-	kWindows1253,
-	kWindows1254,
-	kWindows1255,
-	kWindows1256,
-	kWindows1257,
-	kWindows932,
-	kWindows949,
-	kWindows950
-};
 
 U32String convertUtf8ToUtf32(const String &str);
 String convertUtf32ToUtf8(const U32String &str);

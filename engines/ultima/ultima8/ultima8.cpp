@@ -817,6 +817,7 @@ void Ultima8Engine::handleEvent(const Common::Event &event) {
 		}
 
 		if (gump) {
+			char c;
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
 				// Paste from Clip-Board on Ctrl-V - Note this should be a flag of some sort
@@ -824,20 +825,20 @@ void Ultima8Engine::handleEvent(const Common::Event &event) {
 					if (!g_system->hasTextInClipboard())
 						return;
 
-					Common::String text = g_system->getTextFromClipboard();
+					Common::String text = Common::convertFromU32String(g_system->getTextFromClipboard(), Common::kCodePage850);
 
 					// Only read the first line of text
-					while (!text.empty() && text.firstChar() >= ' ')
-						gump->OnTextInput(text.firstChar());
-
+					for (size_t i = 0; i < text.size(); i++) {
+						if ((uint8)text[i] < ' ')
+							break;
+						gump->OnTextInput(text[i]);
+					}
 					return;
 				}
 
-				if (event.kbd.ascii >= ' ' &&
-					event.kbd.ascii <= 255 &&
-					!(event.kbd.ascii >= 0x7F && // control chars
-						event.kbd.ascii <= 0x9F)) {
-					gump->OnTextInput(event.kbd.ascii);
+				c = event.kbd.getINT16hCharacter(Common::kCodePage850);
+				if ((uint8)c >= 0x20) {
+					gump->OnTextInput(c);
 				}
 
 				gump->OnKeyDown(event.kbd.keycode, event.kbd.flags);

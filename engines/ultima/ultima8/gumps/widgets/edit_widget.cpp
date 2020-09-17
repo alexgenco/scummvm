@@ -237,13 +237,10 @@ bool EditWidget::OnKeyUp(int key) {
 }
 
 
-bool EditWidget::OnTextInput(int unicode) {
+bool EditWidget::OnTextInput(char c) {
 	if (_maxLength > 0 && _text.size() >= _maxLength)
 		return true;
 
-	char c = 0;
-	if (unicode >= 0 && unicode < 256)
-		c = reverse_encoding[unicode];
 	if (!c) return true;
 
 	Std::string newtext = _text;

@@ -483,7 +483,7 @@ protected:
 	void setupScummVars() override;
 	void resetScummVars() override;
 
-	void scummLoop(int delta) override;
+	void scummLoop(byte delta) override;
 	void scummLoop_handleDrawing() override;
 	void runBootscript() override;
 

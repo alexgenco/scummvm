@@ -700,21 +700,29 @@ void KeyBinder::set_axis(uint8 index, uint8 value) {
 	switch (index) {
 	case 0:
 		x_axis = value;
+		break;
 	case 1:
 		y_axis = value;
+		break;
 	case 2:
 		x_axis2 = value;
+		break;
 	case 3:
 		y_axis2 = value;
+		break;
 	case 4:
 		x_axis3 = value;
+		break;
 	case 5:
 		y_axis3 = value;
+		break;
 	case 6:
 		x_axis4 = value;
+		break;
 	case 7:
 	default:
 		y_axis4 = value;
+		break;
 	}
 }
 
@@ -942,17 +950,6 @@ Common::KeyCode KeyBinder::get_key_from_joy_events(Common::Event *event) {
 	} else {
 		return Common::KEYCODE_INVALID;
 	}
-}
-
-char get_ascii_char_from_keysym(Common::KeyState keysym) {
-	char ascii = 0;
-	if (keysym.keycode < 128) {
-		ascii = (char)keysym.keycode;
-		if (ascii >= 97 && ascii <= 122 && keysym.flags & (Common::KBD_SHIFT | Common::KBD_CAPS)) {
-			ascii -= 32;
-		}
-	}
-	return ascii;
 }
 
 } // End of namespace Nuvie

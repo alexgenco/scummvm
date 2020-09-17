@@ -128,9 +128,6 @@ protected:
 		static Std::string::size_type length(const Std::string &t) {
 			return t.size();
 		}
-		static uint32 unicode(Std::string::const_iterator &i) {
-			return encoding[static_cast<uint8>(*i++)];
-		}
 	};
 	struct SJISTraits : public Traits {
 		static bool canBreakAfter(Std::string::const_iterator &i);

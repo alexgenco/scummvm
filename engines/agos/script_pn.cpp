@@ -510,7 +510,7 @@ void AGOSEngine_PN::opn_opcode37() {
 void AGOSEngine_PN::opn_opcode38() {
 	_noScanFlag = 1;
 	clearInputLine();
-	writeval(_workptr, _keyPressed.ascii);
+	writeval(_workptr, _keyPressed.getINT16hCharacter());
 	_keyPressed.reset();
 	_noScanFlag = 0;
 	varval();

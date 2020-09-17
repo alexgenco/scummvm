@@ -216,6 +216,20 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		0
 	},
 
+    {
+        {
+			"ultima8",
+			"Gold Edition",
+			AD_ENTRY1s("eusecode.flx", "5494165cbf4b07be04a465e28350e086", 1209018),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOMIDI)
+		},
+        GAME_ULTIMA8,
+        0
+	},
+
 	{
 		{
 			"ultima8",
@@ -372,6 +386,21 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			"",
 			AD_ENTRY1s("eusecode.flx", "1bb360156b7240a1f05eb9bda01c54db", 481652),
 			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOMIDI)
+		},
+		GAME_CRUSADER_REG,
+		0
+	},
+
+	// Crusader - No Regret - German V1.07NV
+	{
+		{
+			"regret",
+			"",
+			AD_ENTRY1s("eusecode.flx", "1824d9725de45a8b49f058c12c6cf5c3", 484445),
+			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
 			GUIO1(GUIO_NOMIDI)

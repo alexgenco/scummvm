@@ -13,7 +13,6 @@ MODULE_OBJS := \
 	costume.o \
 	cursor.o \
 	debugger.o \
-	detection.o \
 	dialogs.o \
 	file.o \
 	file_nes.o \
@@ -35,6 +34,7 @@ MODULE_OBJS := \
 	imuse/drivers/mac_m68k.o \
 	imuse/drivers/pcspk.o \
 	input.o \
+	metaengine.o \
 	midiparser_ro.o \
 	object.o \
 	palette.o \
@@ -168,3 +168,13 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o
+
+# Skip building the following objects if a static
+# module is enabled, because it already has the contents.
+ifneq ($(ENABLE_SCUMM), STATIC_PLUGIN)
+DETECT_OBJS += $(MODULE)/file.o
+DETECT_OBJS += $(MODULE)/file_nes.o
+endif

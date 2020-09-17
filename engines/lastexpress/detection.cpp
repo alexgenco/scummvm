@@ -20,7 +20,6 @@
  *
  */
 
-#include "lastexpress/lastexpress.h"
 #include "engines/advancedDetector.h"
 
 namespace LastExpress {
@@ -224,9 +223,9 @@ static const ADGameDescription gameDescriptions[] = {
 };
 
 
-class LastExpressMetaEngine : public AdvancedMetaEngine {
+class LastExpressMetaEngineStatic : public AdvancedMetaEngineStatic {
 public:
-	LastExpressMetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(ADGameDescription), lastExpressGames) {
+	LastExpressMetaEngineStatic() : AdvancedMetaEngineStatic(gameDescriptions, sizeof(ADGameDescription), lastExpressGames) {
 		_guiOptions = GUIO2(GUIO_NOSUBTITLES, GUIO_NOSFX);
 	}
 
@@ -241,26 +240,8 @@ public:
 	const char *getOriginalCopyright() const override {
 		return "The Last Express (C) 1997 Smoking Car Productions";
 	}
-
-protected:
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
 };
-
-bool LastExpressMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
-	if (gd) {
-		*engine = new LastExpressEngine(syst, (const ADGameDescription *)gd);
-	}
-	return gd != 0;
-}
-
-bool LastExpressEngine::isDemo() const {
-	return (bool)(_gameDescription->flags & ADGF_DEMO);
-}
 
 } // End of namespace LastExpress
 
-#if PLUGIN_ENABLED_DYNAMIC(LASTEXPRESS)
-	REGISTER_PLUGIN_DYNAMIC(LASTEXPRESS, PLUGIN_TYPE_ENGINE, LastExpress::LastExpressMetaEngine);
-#else
-	REGISTER_PLUGIN_STATIC(LASTEXPRESS, PLUGIN_TYPE_ENGINE, LastExpress::LastExpressMetaEngine);
-#endif
+REGISTER_PLUGIN_STATIC(LASTEXPRESS_DETECTION, PLUGIN_TYPE_METAENGINE, LastExpress::LastExpressMetaEngineStatic);

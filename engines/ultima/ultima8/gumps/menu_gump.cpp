@@ -264,8 +264,8 @@ void MenuGump::selectEntry(int entry) {
 	}
 }
 
-bool MenuGump::OnTextInput(int unicode) {
-	if (Gump::OnTextInput(unicode)) return true;
+bool MenuGump::OnTextInput(char c) {
+	if (Gump::OnTextInput(c)) return true;
 
 	return true;
 }

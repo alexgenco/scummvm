@@ -127,11 +127,7 @@ void KeypadGump::ChildNotify(Gump *child, uint32 message) {
 	}
 }
 
-bool KeypadGump::OnTextInput(int unicode) {
-	if (!(unicode & 0xFF80)) {
-		//char c = unicode & 0x7F;
-		// TODO: Accept numeric keyboard inputs
-	}
+bool KeypadGump::OnTextInput(char c) {
 	return true;
 }
 

@@ -98,19 +98,18 @@ void Util::convertDOSToISO(char *str) {
 }
 
 void Util::convertISOToDOS(char *str) {
-	while (*str)
-		convertISOToDOS(*str++);
-}
+	uint8 *s = (uint8 *)str;
 
-void Util::convertISOToDOS(char &c) {
-	uint8 code = (uint8)c;
-	if (code >= 128) {
-		code = _charMapISOToDOS[code - 128];
-		if (!code)
-			code = 0x20;
+	for (; *s; ++s) {
+		if (*s >= 128) {
+			uint8 c = _charMapISOToDOS[*s - 128];
+
+			if (!c)
+				c = 0x20;
+
+			*s = c;
+		}
 	}
-
-	c = code;
 }
 
 // CP850 to ISO-8859-1 (borrowed from engines/saga/font_map.cpp)

@@ -1012,14 +1012,12 @@ static int nscript_input_poll(lua_State *L) {
 		}
 
 		if (event.type == Common::EVENT_KEYDOWN) {
-			Common::KeyState key = event.kbd;
+			char ascii = event.kbd.getINT16hCharacter();
+			if ((uint8)ascii >= 0x80)
+				ascii = 0;
 
-			if ((((key.flags & Common::KBD_CAPS) == Common::KBD_CAPS
-					&& (key.flags & Common::KBD_SHIFT) == 0) || ((key.flags & Common::KBD_CAPS) == 0 && (key.flags & Common::KBD_SHIFT)))
-			        && key.keycode >= Common::KEYCODE_a && key.keycode <= Common::KEYCODE_z)
-				key.keycode = (Common::KeyCode)(key.keycode - 32);
-			if (key.keycode > 0xFF || !Common::isPrint((char)key.keycode) || (key.flags & Common::KBD_ALT) || (key.flags & Common::KBD_CTRL)) {
-				ActionType a = keybinder->get_ActionType(key);
+			if (!Common::isPrint(ascii)) {
+				ActionType a = keybinder->get_ActionType(event.kbd);
 				switch (keybinder->GetActionKeyType(a)) {
 				case WEST_KEY:
 					lua_pushinteger(L, INPUT_KEY_LEFT);
@@ -1034,17 +1032,17 @@ static int nscript_input_poll(lua_State *L) {
 					lua_pushinteger(L, INPUT_KEY_UP);
 					return 1;
 				case CANCEL_ACTION_KEY:
-					key.keycode = Common::KEYCODE_ESCAPE;
+					ascii = Common::ASCII_ESCAPE;
 					break;
 				case DO_ACTION_KEY:
-					key.keycode = Common::KEYCODE_RETURN;
+					ascii = Common::ASCII_RETURN;
 					break;
 				default:
 					if (keybinder->handle_always_available_keys(a)) return 0;
 					break;
 				}
 			}
-			lua_pushinteger(L, key.keycode);
+			lua_pushinteger(L, ascii);
 			return 1;
 		}
 		if (event.type == Common::EVENT_QUIT) {

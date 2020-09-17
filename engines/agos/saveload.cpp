@@ -328,8 +328,8 @@ restart:
 
 		while (!shouldQuit()) {
 			delay(10);
-			if (_keyPressed.ascii && _keyPressed.ascii < 128) {
-				i = _keyPressed.ascii;
+			i = _keyPressed.getINT16hCharacter();
+			if (i && i < 128) {
 				break;
 			}
 		}
@@ -565,9 +565,10 @@ int AGOSEngine_Elvira2::userGameGetKey(bool *b, uint maxChar) {
 		_lastHitArea3 = NULL;
 
 		do {
-			if (_saveLoadEdit && _keyPressed.ascii && _keyPressed.ascii < maxChar) {
+			const uint key = _keyPressed.getINT16hCharacter();
+			if (_saveLoadEdit && key && key < maxChar) {
 				*b = false;
-				return _keyPressed.ascii;
+				return key;
 			}
 			delay(10);
 		} while (_lastHitArea3 == 0 && !shouldQuit());
@@ -837,9 +838,10 @@ int AGOSEngine_Simon1::userGameGetKey(bool *b, uint maxChar) {
 		_lastHitArea3 = NULL;
 
 		do {
-			if (_saveLoadEdit && _keyPressed.ascii && _keyPressed.ascii < maxChar) {
+			const uint key = _keyPressed.getINT16hCharacter();
+			if (_saveLoadEdit && key && key < maxChar) {
 				*b = false;
-				return _keyPressed.ascii;
+				return key;
 			}
 			delay(10);
 		} while (_lastHitArea3 == 0 && !shouldQuit());

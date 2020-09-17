@@ -54,7 +54,7 @@ public:
 	Gump *onMouseMotion(int32 mx, int32 my) override;
 	bool OnKeyDown(int key, int mod) override;
 	bool OnKeyUp(int key) override;
-	bool OnTextInput(int unicode) override;
+	bool OnTextInput(char c) override;
 
 	void OnFocus(bool gain) override;
 
