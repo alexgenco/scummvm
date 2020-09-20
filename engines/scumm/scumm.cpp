@@ -166,6 +166,8 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_objs = NULL;
 	_sound = NULL;
 	memset(&vm, 0, sizeof(vm));
+	_msecFractionalParts = 0;
+	_lastWaitTime = 0;
 	_pauseDialog = NULL;
 	_versionDialog = NULL;
 	_fastMode = 0;
@@ -2118,14 +2120,13 @@ Common::Error ScummEngine::go() {
 		_saveLoadFlag = 0;
 	}
 
-	int diff = 0;	// Duration of one loop iteration
-
 	while (!shouldQuit()) {
 		// Randomize the PRNG by calling it at regular intervals. This ensures
 		// that it will be in a different state each time you run the program.
 		_rnd.getRandomNumber(2);
 
 		// Notify the script about how much time has passed, in ticks (60 ticks per second)
+		const uint32 diff = _system->getMillis() - _lastWaitTime;
 		if (VAR_TIMER != 0xFF)
 			VAR(VAR_TIMER) = diff * 60 / 1000;
 		if (VAR_TIMER_TOTAL != 0xFF)
@@ -2156,16 +2157,10 @@ Common::Error ScummEngine::go() {
 		}
 
 		// Wait...
-		waitForTimer(delta * 1000 / 60 - diff);
-
-		// Start the stop watch!
-		diff = _system->getMillis();
+		waitForTimer(delta << 2);
 
 		// Run the main loop
 		scummLoop(delta);
-
-		// Halt the stop watch and compute how much time this iteration took.
-		diff = _system->getMillis() - diff;
 
 
 		if (shouldQuit()) {
@@ -2177,15 +2172,27 @@ Common::Error ScummEngine::go() {
 	return Common::kNoError;
 }
 
-void ScummEngine::waitForTimer(int msec_delay) {
+void ScummEngine::waitForTimer(int delay) {
+	// Convert to milliseconds, decompose to integral and fractional parts,
+	// then increment the integer if needed.
+	const double fMsecDelay = delay * (1000 / 60.0) / 4;
+	uint32 msecDelay = (uint32)fMsecDelay;
+	_msecFractionalParts += fMsecDelay - msecDelay;
+	msecDelay += (uint32)_msecFractionalParts;
+	if (_msecFractionalParts >= 1)
+		_msecFractionalParts--;
 
 	if (_fastMode & 2)
-		msec_delay = 0;
+		msecDelay = 0;
 	else if (_fastMode & 1)
-		msec_delay = 10;
+		msecDelay = 10;
+
+	// Halt the stop watch and compute how much time this iteration took.
+	const uint32 diff = _system->getMillis() - _lastWaitTime;
+	msecDelay = (msecDelay > diff) ? msecDelay - diff : 0;
 
 	uint32 time;
-	const uint32 wakeUpTime = _system->getMillis() + msec_delay;
+	const uint32 wakeUpTime = _system->getMillis() + msecDelay;
 
 	while (!shouldQuit()) {
 		_sound->updateCD(); // Loop CD Audio if needed
@@ -2207,6 +2214,9 @@ void ScummEngine::waitForTimer(int msec_delay) {
 			break;
 		}
 	}
+
+	// Start the stop watch!
+	_lastWaitTime = _system->getMillis();
 }
 
 void ScummEngine_v0::scummLoop(int delta) {

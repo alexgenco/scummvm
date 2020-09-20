@@ -66,8 +66,7 @@ struct StripTable {
 };
 
 enum {
-	kPictureDelay = 20,
-	kFadeDelay = 4 // 1/4th of a jiffie
+	kPictureDelay = 5,
 };
 
 #define NUM_SHAKE_POSITIONS 8
@@ -3898,7 +3897,7 @@ void ScummEngine::transitionEffect(int a) {
 	int bottom;
 	int l, t, r, b;
 	const int height = MIN((int)_virtscr[kMainVirtScreen].h, _screenHeight);
-	const int delay = (VAR_FADE_DELAY != 0xFF) ? VAR(VAR_FADE_DELAY) * kFadeDelay : kPictureDelay;
+	const int delay = (VAR_FADE_DELAY != 0xFF) ? VAR(VAR_FADE_DELAY) : kPictureDelay;
 
 	for (i = 0; i < 16; i++) {
 		delta[i] = transitionEffects[a].deltaTable[i];
@@ -4049,14 +4048,14 @@ void ScummEngine::dissolveEffect(int width, int height) {
 
 		if (++blits >= blits_before_refresh) {
 			blits = 0;
-			waitForTimer(30);
+			waitForTimer(8);
 		}
 	}
 
 	free(offsets);
 
 	if (blits != 0) {
-		waitForTimer(30);
+		waitForTimer(8);
 	}
 }
 
@@ -4065,7 +4064,7 @@ void ScummEngine::scrollEffect(int dir) {
 
 	int x, y;
 	const int step = 8;
-	const int delay = VAR(VAR_FADE_DELAY) * kFadeDelay;
+	const int delay = VAR(VAR_FADE_DELAY);
 
 	byte *src;
 	int m = _textSurfaceMultiplier;

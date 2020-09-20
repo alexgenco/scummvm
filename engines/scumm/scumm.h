@@ -476,7 +476,10 @@ public:
 protected:
 	virtual void parseEvent(Common::Event event);
 
-	void waitForTimer(int msec_delay);
+	void waitForTimer(int delay);
+	double _msecFractionalParts;
+	uint32 _lastWaitTime;
+
 	virtual void processInput();
 	virtual void processKeyboard(Common::KeyState lastKeyHit);
 	virtual void clearClickedStatus();
