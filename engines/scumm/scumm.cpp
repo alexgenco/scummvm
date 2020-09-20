@@ -2216,7 +2216,7 @@ void ScummEngine::waitForTimer(int delay) {
 	}
 
 	// Start the stop watch!
-	_lastWaitTime = _system->getMillis();
+	_lastWaitTime = wakeUpTime;
 }
 
 void ScummEngine_v0::scummLoop(int delta) {
