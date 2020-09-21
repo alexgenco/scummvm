@@ -368,6 +368,16 @@ void ScummEngine::processInput() {
 
 	_mouseAndKeyboardStat = getKey(lastKeyHit);
 
+	if (_mouseAndKeyboardStat == SCUMM_KEY_RETURN &&
+	    _cursor.state > 0 && _game.version <= 6) {
+		_mouseAndKeyboardStat = MBS_LEFT_CLICK;
+		return;
+	} else if (_mouseAndKeyboardStat == SCUMM_KEY_TAB &&
+	    _cursor.state > 0 && _game.version <= 6 && _game.version >= 4) {
+		_mouseAndKeyboardStat = MBS_RIGHT_CLICK;
+		return;
+	}
+
 	processKeyboard();
 }
 
