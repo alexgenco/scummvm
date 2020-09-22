@@ -475,8 +475,8 @@ void ScummEngine_v2::processKeyboard() {
 	// Fall back to default behavior
 	ScummEngine::processKeyboard();
 
-	// On Alt-F5 prepare savegame for the original save/load dialog.
-	if (_mouseAndKeyboardStat == SCUMM_KEY_ALT_F5) {
+	// Prepare savegame for the original save/load dialog.
+	if (isOriginalMenuKey()) {
 		prepareSavegame();
 		if (_game.id == GID_MANIAC && _game.version == 0) {
 			runScript(2, 0, 0, 0);
@@ -500,8 +500,8 @@ void ScummEngine_v3::processKeyboard() {
 	// Fall back to default behavior
 	ScummEngine::processKeyboard();
 
-	// On Alt-F5 prepare savegame for the original save/load dialog.
-	if (_mouseAndKeyboardStat == SCUMM_KEY_ALT_F5) {
+	// On F5 prepare savegame for the original save/load dialog.
+	if (isOriginalMenuKey()) {
 		prepareSavegame();
 	}
 
@@ -539,7 +539,7 @@ void ScummEngine::processKeyboard() {
 		mainmenuKeyEnabled = true;
 
 	// Display global main menu
-	if (mainmenuKeyEnabled && isMainMenuKey()) {
+	if (mainmenuKeyEnabled && isMainMenuKey() && !isOriginalMenuKey()) {
 		if (VAR_SAVELOAD_SCRIPT != 0xFF && _currentRoom != 0)
 			runScript(VAR(VAR_SAVELOAD_SCRIPT), 0, 0, 0);
 
@@ -615,6 +615,13 @@ void ScummEngine::processKeyboard() {
 		if (VAR_CHARINC != 0xFF)
 			VAR(VAR_CHARINC) = _defaultTalkDelay;
 	}
+}
+
+bool ScummEngine::isOriginalMenuKey() const {
+	return ((_mouseAndKeyboardStat == SCUMM_KEY_SHIFT_F1 && _game.platform == Common::kPlatformC64) ||
+	        (_mouseAndKeyboardStat == SCUMM_KEY_CTRL_L && _game.platform == Common::kPlatformApple2GS) ||
+	        (_mouseAndKeyboardStat == SCUMM_KEY_F5 && _game.version >= 1 && _game.version <= 3 &&
+	         _game.platform != Common::kPlatformMacintosh && _game.platform != Common::kPlatformPCEngine));
 }
 
 bool ScummEngine::isMainMenuKey() const {

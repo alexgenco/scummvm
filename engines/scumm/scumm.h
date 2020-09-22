@@ -449,6 +449,7 @@ protected:
 
 	void mapKeysForSegaCD(const Common::KeyState &lastKeyHit);
 
+	bool isOriginalMenuKey() const;
 	bool isMainMenuKey() const;
 	bool isRestartKey() const;
 	bool isCutsceneExitKey() const;
