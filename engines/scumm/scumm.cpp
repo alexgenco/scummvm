@@ -2133,7 +2133,7 @@ Common::Error ScummEngine::go() {
 			VAR(VAR_TIMER_TOTAL) += diff * 60 / 1000;
 
 		// Determine how long to wait before the next loop iteration should start
-		int delta = (VAR_TIMER_NEXT != 0xFF) ? VAR(VAR_TIMER_NEXT) : 4;
+		byte delta = (VAR_TIMER_NEXT != 0xFF) ? VAR(VAR_TIMER_NEXT) : 4;
 		if (delta < 1)	// Ensure we don't get into an endless loop
 			delta = 1;  // by not decreasing sleepers.
 
@@ -2172,7 +2172,7 @@ Common::Error ScummEngine::go() {
 	return Common::kNoError;
 }
 
-void ScummEngine::waitForTimer(int delay) {
+void ScummEngine::waitForTimer(uint16 delay) {
 	// Convert to milliseconds, decompose to integral and fractional parts,
 	// then increment the integer if needed.
 	const double fMsecDelay = delay * (1000 / getTimerFrequency());
@@ -2240,13 +2240,13 @@ double ScummEngine::getTimerFrequency() const {
 	}
 }
 
-void ScummEngine_v0::scummLoop(int delta) {
+void ScummEngine_v0::scummLoop(byte delta) {
 	VAR(VAR_IS_SOUND_RUNNING) = (_sound->_lastSound && _sound->isSoundRunning(_sound->_lastSound) != 0);
 
 	ScummEngine::scummLoop(delta);
 }
 
-void ScummEngine::scummLoop(int delta) {
+void ScummEngine::scummLoop(byte delta) {
 	if (_game.version >= 3) {
 		VAR(VAR_TMR_1) += delta;
 		VAR(VAR_TMR_2) += delta;
@@ -2413,7 +2413,7 @@ load_game:
 }
 
 #ifdef ENABLE_HE
-void ScummEngine_v90he::scummLoop(int delta) {
+void ScummEngine_v90he::scummLoop(byte delta) {
 	_moviePlay->handleNextFrame();
 	if (_game.heversion >= 98) {
 		_logicHE->startOfFrame();
