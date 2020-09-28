@@ -2148,12 +2148,12 @@ Common::Error ScummEngine::go() {
 			delta += ((ScummEngine_v0 *)this)->DelayCalculateDelta();
 		}
 
-		// WORKAROUND: walking speed in the original v1 interpreter
-		// is sometimes slower (e.g. during scrolling) than in ScummVM.
-		// This is important for the door-closing action in the dungeon,
-		// otherwise (delta < 6) a single kid is able to escape.
-		if (_game.version == 1 && isScriptRunning(137)) {
-				delta = 6;
+		// WORKAROUND: In MANIAC V1, the strange workings of the wait loop will
+		// increment the timer past the comparison, producing a longer wait loop
+		// than expected. We need to round up VAR_TIMER_NEXT to the nearest
+		// multiple of three, as one tick represents three frames.
+		if (_game.id == GID_MANIAC && _game.version == 1) {
+			delta = ceil(VAR(VAR_TIMER_NEXT) / 3) * 3;
 		}
 
 		// Wait...
@@ -2173,6 +2173,12 @@ Common::Error ScummEngine::go() {
 }
 
 void ScummEngine::waitForTimer(uint16 delay) {
+	// WORKAROUND: In MANIAC V1, the timer resolution is lower than the
+	// frame-time derived from it, i.e. one tick represents three frames.
+	if (_game.id == GID_MANIAC && _game.version == 1) {
+		delay = ceil(VAR(VAR_TIMER_NEXT) / 3);
+	}
+
 	// Convert to milliseconds, decompose to integral and fractional parts,
 	// then increment the integer if needed.
 	const double fMsecDelay = delay * (1000 / getTimerFrequency());
@@ -2227,6 +2233,8 @@ double ScummEngine::getTimerFrequency() const {
 
 	switch (_game.version) {
 	case 1:
+		if (_game.id == GID_MANIAC)
+			return frequencyIntel8253 / 65536; // 18.2065 Hz
 	case 2:
 	case 3:
 	case 4:
