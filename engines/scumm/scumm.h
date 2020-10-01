@@ -219,6 +219,11 @@ enum ScummKeyCode {
 	SCUMM_KEY_SHIFT_F7         = 346,
 	SCUMM_KEY_CTRL_F5          = 354,
 	SCUMM_KEY_ALT_F5           = 364,
+
+	SEGACD_KEY_UP              = 54,
+	SEGACD_KEY_DOWN            = 55,
+	SEGACD_KEY_RIGHT           = 56,
+	SEGACD_KEY_LEFT            = 57
 };
 
 struct SentenceTab {
@@ -441,6 +446,8 @@ protected:
 	virtual void processInput();
 	virtual void processKeyboard();
 	virtual void clearClickedStatus();
+
+	void mapKeysForSegaCD(const Common::KeyState &lastKeyHit);
 
 	bool isMainMenuKey() const;
 	bool isRestartKey() const;

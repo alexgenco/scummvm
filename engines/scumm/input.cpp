@@ -315,6 +315,9 @@ void ScummEngine::processInput() {
 		}
 	}
 
+	if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD)
+		mapKeysForSegaCD(lastKeyHit);
+
 	_leftBtnPressed &= ~msClicked;
 	_rightBtnPressed &= ~msClicked;
 	_scrollWheelUp = false;
@@ -581,6 +584,32 @@ bool ScummEngine::isCutsceneExitKey() const {
 	        (_mouseAndKeyboardStat == SCUMM_KEY_RETURN && _game.id == GID_ZAK && _game.platform == Common::kPlatformC64) ||
 	        (_mouseAndKeyboardStat == SCUMM_KEY_F4 && _game.id == GID_MANIAC && _game.version >= 1 && _game.platform != Common::kPlatformNES) ||
 	        (_mouseAndKeyboardStat == SCUMM_KEY_ESCAPE));
+}
+
+void ScummEngine::mapKeysForSegaCD(const Common::KeyState &lastKeyHit) {
+	// WORKAROUND: The following cases enable dialog choices to be scrolled
+	// through in the SegaCD version of MI. Values are taken from script-14.
+	// See bug report #1193185 for details.
+	switch (lastKeyHit.keycode) {
+	case Common::KEYCODE_UP:
+		_mouseAndKeyboardStat = SEGACD_KEY_UP;
+		break;
+	case Common::KEYCODE_DOWN:
+		_mouseAndKeyboardStat = SEGACD_KEY_DOWN;
+		break;
+	case Common::KEYCODE_RIGHT:
+		_mouseAndKeyboardStat = SEGACD_KEY_RIGHT;
+		break;
+	case Common::KEYCODE_LEFT:
+		_mouseAndKeyboardStat = SEGACD_KEY_LEFT;
+		break;
+	default:
+		break;
+	}
+	if (_scrollWheelUp)
+		_mouseAndKeyboardStat = SEGACD_KEY_UP;
+	else if (_scrollWheelDown)
+		_mouseAndKeyboardStat = SEGACD_KEY_DOWN;
 }
 
 } // End of namespace Scumm
