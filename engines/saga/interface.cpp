@@ -2623,9 +2623,9 @@ void Interface::converseDisplayTextLines() {
 			textPoint.y = rect.top;
 
 			if (_vm->getGameId() == GID_ITE)
-				_vm->_font->textDraw(kKnownFontSmall, bullet, textPoint, bulletForegnd, bulletBackgnd, (FontEffectFlags)(kFontShadow | kFontDontmap));
+				_vm->_font->textDraw(kKnownFontSmall, bullet, textPoint, bulletForegnd, bulletBackgnd, kFontShadow);
 			else
-				_vm->_font->textDraw(kKnownFontVerb, bullet, textPoint, bulletForegnd, bulletBackgnd, (FontEffectFlags)(kFontShadow | kFontDontmap));
+				_vm->_font->textDraw(kKnownFontVerb, bullet, textPoint, bulletForegnd, bulletBackgnd, kFontShadow);
 		}
 		textPoint.x = rect.left + 1;
 		textPoint.y = rect.top;

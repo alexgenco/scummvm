@@ -46,8 +46,6 @@ Font::Font(SagaEngine *vm) : _vm(vm) {
 #endif
 		loadFont(&_fonts[i],	_vm->getFontDescription(i)->fontResourceId);
 	}
-
-	_fontMapping = 0;
 }
 
 Font::~Font() {
@@ -231,13 +229,6 @@ void Font::createOutline(FontData *font) {
 	}
 }
 
-int Font::translateChar(int charId) {
-	if (charId <= 127 || (_vm->getLanguage() == Common::RU_RUS && charId <= 254))
-		return charId;					// normal character
-	else
-		return _charMap[charId - 128];	// extended character
-}
-
 // Returns the horizontal length in pixels of the graphical representation
 // of at most 'count' characters of the string 'text', taking
 // into account any formatting options specified by 'flags'.
@@ -256,8 +247,6 @@ int Font::getStringWidth(FontId fontId, const char *text, size_t count, FontEffe
 
 	for (ct = count; *txt && (!count || ct > 0); txt++, ct--) {
 		ch = *txt & 0xFFU;
-		// Translate character
-		ch = translateChar(ch);
 		assert(ch < FONT_CHARCOUNT);
 		width += font->normal.fontCharEntry[ch].tracking;
 	}
@@ -323,31 +312,6 @@ void Font::outFont(const FontStyle &drawFont, const char *text, size_t count, co
 	// characters, or no limit if 'draw_str_ct' is 0
 	for (; *textPointer && (!count || ct); textPointer++, ct--) {
 		c_code = *textPointer & 0xFFU;
-
-		// Translate character
-		if (_fontMapping == 0) {	// Check font mapping debug flag
-			// Default game behavior
-
-			// It seems that this font mapping causes problems with non-english
-			// versions of IHNM, so it has been changed to apply for ITE only.
-			// It doesn't make any difference for the English version of IHNM.
-			// Fixes bug #1796045: "IHNM: Spanish font wrong".
-			if (!(flags & kFontDontmap) && _vm->getGameId() == GID_ITE) {
-				if (_vm->getLanguage() != Common::IT_ITA) {
-					c_code = translateChar(c_code);
-				} else {
-					// The in-game fonts of the Italian version should not be mapped.
-					// The ones in the intro are hardcoded and should be mapped normally.
-					 if (_vm->_scene->isInIntro())
-						 c_code = translateChar(c_code);
-				}
-			}
-		} else if (_fontMapping == 1) {
-			// Force font mapping
-			c_code = translateChar(c_code);
-		} else {
-			// In all other cases, ignore font mapping
-		}
 		assert(c_code < FONT_CHARCOUNT);
 
 		// Check if character is defined

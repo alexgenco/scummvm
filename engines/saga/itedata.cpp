@@ -360,7 +360,7 @@ const char *ITEinterfaceTextStrings[][53] = {
 	},
 	// German
 	{
-		"Gehe zu", "Schau an", "Nimm", "Rede mit", "\231ffne",
+		"Gehe zu", "Schau an", "Nimm", "Rede mit", "\326ffne",
 		"Schlie$e", "Benutze", "Gib", "Optionen", "Test",
 		"Demo", "Hilfe", "Spiel beenden", "S", "L",
 		"An", "Aus", "Weiterspielen", "Laden", "Sichern",
@@ -372,8 +372,8 @@ const char *ITEinterfaceTextStrings[][53] = {
 		"[Neuer Spielstand]",
 		"Das kann ich nicht aufnehmen.",
 		"Ich sehe nichts besonderes.",
-		"Das kann man nicht \224ffnen.",
-		"Hier ist keine \231ffnung zum Schlie$en.",
+		"Das kann man nicht \366ffnen.",
+		"Hier ist keine \326ffnung zum Schlie$en.",
 		"Ich wei$ nicht, wie ich das machen soll.",
 		"Text zeigen",
 		"Wie lautet die Antwort?",
@@ -385,7 +385,7 @@ const char *ITEinterfaceTextStrings[][53] = {
 		"Chiudi", "Usa", "Dai", "Opzioni", "Test",
 		"Demo", "Aiuto", "Uscire", "Veloce", "Lento",
 		"On", "Off", "Continua il Gioco", "Carica", "Salva",
-		"Controlli", "Velocit\205 testo", "Musica", "Suoni", "Annulla",
+		"Controlli", "Velocit\340 testo", "Musica", "Suoni", "Annulla",
 		"Fine", "OK", "Med", "Click", "10%",
 		"20%", "30%", "40%", "50%", "60%",
 		"70%", "80%", "90%", "Max", "Terminare il Gioco?",
@@ -393,7 +393,7 @@ const char *ITEinterfaceTextStrings[][53] = {
 		"[Nuovo Salvataggio]",
 		"Non posso raccoglierlo.",
 		"Non ci vedo nulla di speciale.",
-		"Non c'\212 posto per aprirlo.",
+		"Non c'\350 posto per aprirlo.",
 		"Nessuna apertura da chiudere.",
 		"Non saprei come farlo.",
 		"Dialoghi",
@@ -449,23 +449,23 @@ const char *ITEinterfaceTextStrings[][53] = {
 	},
 	// French fan translation : ACTIONS
 	{
-		"Aller vers", "Examiner", "Prendre", "Parler \205", "Ouvrir",
+		"Aller vers", "Examiner", "Prendre", "Parler \340", "Ouvrir",
 		"Fermer", "Utiliser", "Donner", "Options", "Test",
 		"Demo", "Aide", "Quitter le Jeu", "Vite", "Lent",
-		"On", "Off", "Continuer \205 jouer", "Charger", "Sauver",
+		"On", "Off", "Continuer \340 jouer", "Charger", "Sauver",
 		"Options du Jeu", "Vitesse texte", "Musique", "Son", "Annuler",
 		"Quitter", "OK", "Mid", "Click", "10%",
 		"20%", "30%", "40%", "50%", "60%",
 		"70%", "80%", "90%", "Max", "Quitter le jeu?",
-		"Chargement OK!", "Nommer la sauvegarde", "Donner %s \205 %s", "Utiliser %s avec %s",
+		"Chargement OK!", "Nommer la sauvegarde", "Donner %s \340 %s", "Utiliser %s avec %s",
 		"[Nouvelle sauvegarde]",
 		"Je ne peux pas prendre ça.",
-		"Je ne vois rien de sp\202cial.",
+		"Je ne vois rien de sp\351cial.",
 		"Il n'y a pas la place pour l'ouvrir.",
-		"Il n'y a pas d'ouverture \205 fermer.",
+		"Il n'y a pas d'ouverture \340 fermer.",
 		"Je ne sais pas comment l'utiliser.",
 		"Sous-titre",
-		"Que r\202pond Rif?",
+		"Que r\351pond Rif?",
 		"Charger une sauvegarde"
 	},
 	// Japanese
@@ -534,7 +534,7 @@ const char *pieceNames[][PUZZLE_PIECES] = {
 	{
 		"Schraubendreher", "Zange", "Schraubzwinge", "Holzzwinge", "Wasserwaage",
 		"Bindfaden", "Hobel", "Schusterhammer", "Bandma$", "Beil",
-		"Schere", "Winkel", "S\204ge", "Hammer", "Pinsel"
+		"Schere", "Winkel", "S\344ge", "Hammer", "Pinsel"
 	},
 	{
 		"cacciavite", "pinze", "morsa", "morsa da legno", "livella",
@@ -542,9 +542,9 @@ const char *pieceNames[][PUZZLE_PIECES] = {
 		"cesoie", "righello", "sega", "mazza", "pennello"
 	},
 	{
-		"tournevis", "pince", "\202tau \205 vis", "pince \205 bois", "niveau",
-		"ficelle", "rabot \205 bois", "marteau", "m\212tre ruban", "hachette",
-		"ciseaux", "r\212gle", "scie", "maillet", "pinceau"
+		"tournevis", "pince", "\351tau \340 vis", "pince \340 bois", "niveau",
+		"ficelle", "rabot \340 bois", "marteau", "m\350tre ruban", "hachette",
+		"ciseaux", "r\350gle", "scie", "maillet", "pinceau"
 	},
 	{
 		// "ドライバー", "釘抜き", "Ｃ形クランプ", "木のクランプ", "レベル",
@@ -565,9 +565,9 @@ const char *hintStr[][4] = {
 		"I don't see anything out of place."
 	},
 	{
-		"\232berpr\201fe zun\204chst, welche die Eckteile sein k\224nnten.",
+		"\334berpr\374fe zun\344chst, welche die Eckteile sein k\366nnten.",
 		"Schau, in welche Ecke die wenigsten Teile passen, und fang dort an.",
-		"Untersuche jede Ecke und jede Seite auf Teile, die dort passen k\224nnen.",
+		"Untersuche jede Ecke und jede Seite auf Teile, die dort passen k\366nnen.",
 		"Ich sehe nichts an der falschen Stelle."
 	},
 	{
@@ -577,10 +577,10 @@ const char *hintStr[][4] = {
 		"Non vedo nulla fuori posto."
 	},
 	{
-		"Trouve d'abord les pi\212ces qui correspondent aux coins.",
-		"V\202rifie quel coin a le moins de pi\212ces qui correspondent et part de l\205.",
-		"Evalue chaque coin et bord pour voir les pi\212ces qui collent.",
-		"Je ne vois rien de mal plac\202."
+		"Trouve d'abord les pi\350ces qui correspondent aux coins.",
+		"V\351rifie quel coin a le moins de pi\350ces qui correspondent et part de l\340.",
+		"Evalue chaque coin et bord pour voir les pi\350ces qui collent.",
+		"Je ne vois rien de mal plac\351."
 	},
 	{
 		// "まず、四隅に合うピースを\n捜してごらん。",
@@ -604,10 +604,10 @@ const char *solicitStr[][NUM_SOLICIT_REPLIES] = {
 	},
 	{
 		"Hey, Fuchs! Brauchst Du \047nen Tip?",
-		"M\224chtest Du etwas Hilfe?"
-		"\231hm...\216hm..."
+		"M\366chtest Du etwas Hilfe?"
+		"\326hm...\216hm..."
 		"Psst! \047n Tip vielleicht?"
-		"Ja, wei$t Du... ich h\204tte das anders gemacht."
+		"Ja, wei$t Du... ich h\344tte das anders gemacht."
 	},
 	{
 		"Hey, Volpe! Serve un suggerimento?",
@@ -617,7 +617,7 @@ const char *solicitStr[][NUM_SOLICIT_REPLIES] = {
 		"Io, sai, l'avrei fatto diversamente."
 	},
 	{
-		"H\202, Renard! Tu veux un coup de pouce?",
+		"H\351, Renard! Tu veux un coup de pouce?",
 		"T'as besoin d'aide?",
 		"Umm...Umm...",
 		"Psst! Un indice?",
@@ -644,19 +644,19 @@ const char *sakkaStr[][NUM_SAKKA] = {
 		"C'mon fellows, that's not in the rules!"
 	},
 	{
-		"Hey, Du darfst dem Pr\201fling nicht helfen!",
-		"Hallo?! Dies soll eine Pr\201fung sein!",
+		"Hey, Du darfst dem Pr\374fling nicht helfen!",
+		"Hallo?! Dies soll eine Pr\374fung sein!",
 		"Also, Jungs. Schummeln steht nicht in den Regeln!"
 	},
 	{
 		"Hey, non si dovrebbero aiutare i candidati!",
 		"Ragazzi! Questo dovrebbe essere un test!",
-		"Forza ragazzi, non si pu\225!"
+		"Forza ragazzi, non si pu\362!"
 	},
 	{
-		"H\202, vous n'\210tes pas suppos\202s aider les concurrents!",
-		"Les gars! C'est suppos\202 être un test!",
-		"Allez les gars, c'est pas dans les r\212gles!"
+		"H\351, vous n'\352tes pas suppos\351s aider les concurrents!",
+		"Les gars! C'est suppos\351 être un test!",
+		"Allez les gars, c'est pas dans les r\350gles!"
 	},
 	{
 		// "ねぇ、どう？",
@@ -685,7 +685,7 @@ const char *whineStr[][NUM_WHINES] = {
 	},
 	{
 		"Ooo, suvvia Sakka!",
-		"Un indizio non guaster\205, no?",
+		"Un indizio non guaster\340, no?",
 		"Sigh...",
 		"Credo che questa faccenda ti abbia dato alla testa, Sakka!",
 		"Beh, non ricordo regole specifiche contro i suggerimenti."
@@ -694,8 +694,8 @@ const char *whineStr[][NUM_WHINES] = {
 		"Rohh, allez Sakka!",
 		"Un indice ne peut pas faire de mal.",
 		"Pfff...",
-		"Je crois que ton carnet te monte \205 la t\210te, Sakka!",
-		"Bon, je ne me souviens d'aucune r\212gle concernant les indices."
+		"Je crois que ton carnet te monte \340 la t\352te, Sakka!",
+		"Bon, je ne me souviens d'aucune r\350gle concernant les indices."
 	},
 	{
 		// "アゥ、\nちょっと、サッカ！",
@@ -719,22 +719,22 @@ const char *optionsStr[][4] = {
 		"I think the %s is in the wrong place."
 	},
 	{
-		"\"Ich l\224se das Puzzle sp\204ter.\"",
-		"\"Ja, ich m\224chte einen Tip, bitte.\"",
-		"\"Nein danke, ich m\224chte das alleine l\224sen.\"",
+		"\"Ich l\366se das Puzzle sp\344ter.\"",
+		"\"Ja, ich m\366chte einen Tip, bitte.\"",
+		"\"Nein danke, ich m\366chte das alleine l\366sen.\"",
 		"Pssst... %s... falsche Stelle..."
 	},
 	{
-		"\"Far\225 questo puzzle pi\227 tardi.\"",
+		"\"Far\362 questo puzzle pi\371 tardi.\"",
 		"\"Si, grazie. Ne avrei bisogno.\"",
 		"\"No, grazie, voglio provare a risolverlo da solo.\"",
 		"Penso che la tessera %s sia nel posto sbagliato."
 	},
 	{
-		"\"Je r\202soudrai cette \202nigme plus tard.\"",
+		"\"Je r\351soudrai cette \351nigme plus tard.\"",
 		"\"Oui, j'aimerais un indice s'il vous plait.\"",
-		"\"Non merci, je voudrais r\202soudre cela par moi m\210me.\"",
-		"Je crois que t'as mal plac\202 l'%s."
+		"\"Non merci, je voudrais r\351soudre cela par moi m\352me.\"",
+		"Je crois que t'as mal plac\351 l'%s."
 	},
 	{
 		// "「後でやろうかな。」",
@@ -778,7 +778,7 @@ const IntroDialogue introDialogueCave1[][4] = {
 	{
 		1,		// cave voice 1
 		"Lange vor unserer Zeit herrschten die Menschen "
-		"\201ber die Erde."
+		"\374ber die Erde."
 	},
 	{
 		2,		// cave voice 2
@@ -788,8 +788,8 @@ const IntroDialogue introDialogueCave1[][4] = {
 	{
 		3,		// cave voice 3
 		"Sie kannten das Geheimnis des Fluges, das Geheimnis "
-		"der Fr\224hlichkeit und andere Geheimnisse, die "
-		"unsere Vorstellungskraft \201bersteigen."
+		"der Fr\366hlichkeit und andere Geheimnisse, die "
+		"unsere Vorstellungskraft \374bersteigen."
 	} },
 	// -----------------------------------------------------
 	{ { // Italian fan translation
@@ -810,7 +810,7 @@ const IntroDialogue introDialogueCave1[][4] = {
 	{
 		3,		// cave voice 3
 		"Conoscevano il Segreto del Volo, il Segreto della "
-		"Felicit\205, ed altri segreti oltre ogni nostra "
+		"Felicit\340, ed altri segreti oltre ogni nostra "
 		"immaginazione."
 	} },
 	// -----------------------------------------------------
@@ -822,19 +822,19 @@ const IntroDialogue introDialogueCave1[][4] = {
 	},
 	{
 		1,		// cave voice 1
-		"Bien avant notre av\212nement, les humains "
-		"r\202gnaient sur Terre."
+		"Bien avant notre av\350nement, les humains "
+		"r\351gnaient sur Terre."
 	},
 	{
 		2,		// cave voice 2
 		"Ils firent des choses merveilleuses, et "
-		"d\202plac\212rent des montagnes."
+		"d\351plac\350rent des montagnes."
 	},
 	{
 		3,		// cave voice 3
-		"Ils savaient comment Voler, poss\202daient le "
+		"Ils savaient comment Voler, poss\351daient le "
 		"secret du Bonheur et d'autres secrets au "
-		"del\205 de notre imagination."
+		"del\340 de notre imagination."
 	} },
 	// -----------------------------------------------------
 	{ { // Japanese PC-98 version
@@ -889,7 +889,7 @@ const IntroDialogue introDialogueCave2[][3] = {
 	},
 	{
 		5,		// cave voice 5
-		"den denkenden Geist, das f\201hlende Herz, den "
+		"den denkenden Geist, das f\374hlende Herz, den "
 		"sprechenden Mund und die greifende Hand."
 	},
 	{
@@ -905,7 +905,7 @@ const IntroDialogue introDialogueCave2[][3] = {
 	},
 	{
 		5,		// cave voice 5
-		"Il pensiero, le emozioni, la parola e la manualit\205."
+		"Il pensiero, le emozioni, la parola e la manualit\340."
 
 	},
 	{
@@ -915,13 +915,13 @@ const IntroDialogue introDialogueCave2[][3] = {
 	{ { // Fench fan translation
 		4,		// cave voice 4
 		"Les humains connaissaient aussi le secret de "
-		"la Vie, et l'utilis\212rent pour nous offrir "
+		"la Vie, et l'utilis\350rent pour nous offrir "
 		"Quatres Dons:"
 	},
 	{
 		5,		// cave voice 5
-		"La Pens\202e, les Sentiments, la Parole et, "
-		"l'Habilet\202 manuelle."
+		"La Pens\351e, les Sentiments, la Parole et, "
+		"l'Habilet\351 manuelle."
 	},
 	{
 		6,		// cave voice 6
@@ -967,7 +967,7 @@ const IntroDialogue introDialogueCave3[][3] = {
 	// -----------------------------------------------------
 	{ { // German
 		7,		// cave voice 7
-		"Sie lehrten uns zu sprechen und unsere H\204nde zu "
+		"Sie lehrten uns zu sprechen und unsere H\344nde zu "
 		"benutzen."
 	},
 	{
@@ -976,9 +976,9 @@ const IntroDialogue introDialogueCave3[][3] = {
 	},
 	{
 		9,		// cave voice 9
-		"Sie liebten uns, und w\204ren wir bereit gewesen, "
-		"h\204tten sie uns sicherlich das Geheimnis der "
-		"Fr\224hlichkeit offenbart."
+		"Sie liebten uns, und w\344ren wir bereit gewesen, "
+		"h\344tten sie uns sicherlich das Geheimnis der "
+		"Fr\366hlichkeit offenbart."
 	} },
 	// -----------------------------------------------------
 	{ { // Italian fan translation
@@ -989,27 +989,27 @@ const IntroDialogue introDialogueCave3[][3] = {
 	{
 		8,		// cave voice 8
 		"Ci mostrarono le gioie che l'uso della mente "
-		"pu\225 dare. "
+		"pu\362 dare. "
 	},
 	{
 		9,		// cave voice 9
 		"Ci amarono, ed una volta pronti, ci avrebbero "
-		"sicuramente svelato il Segreto della Felicit\205."
+		"sicuramente svelato il Segreto della Felicit\340."
 
 	} },
 	{ { // French fan translation
 		7,		// cave voice 7
-		"Ils nous apprirent \205 utiliser nos mains, et \205 "
+		"Ils nous apprirent \340 utiliser nos mains, et \340 "
 		"parler."
 	},
 	{
 		8,		// cave voice 8
-		"Ils nous apprirent les joies de la pens\202e."
+		"Ils nous apprirent les joies de la pens\351e."
 	},
 	{
 		9,		// cave voice 9
-		"Ils nous aim\212rent, et le moment venu, ils "
-		"nous auraient s\223rement livr\202 le Secret du "
+		"Ils nous aim\350rent, et le moment venu, ils "
+		"nous auraient s\364rement livr\351 le Secret du "
 		"Bonheur."
 	} },
 	// -----------------------------------------------------
@@ -1068,7 +1068,7 @@ const IntroDialogue introDialogueCave4[][4] = {
 	},
 	{
 		12,		// cave voice 12
-		"Wir fragen uns - war ihr Schicksal gut oder b\224se?"
+		"Wir fragen uns - war ihr Schicksal gut oder b\366se?"
 	},
 	{
 		13,		// cave voice 13
@@ -1079,12 +1079,12 @@ const IntroDialogue introDialogueCave4[][4] = {
 	{ { // Italian fan translation
 		10,		// cave voice 10
 		"Ed ora che guardiamo il cielo, la terra e l'acqua "
-		"che abbiamo ereditato, pensiamo: Perch\202 partirono?"
+		"che abbiamo ereditato, pensiamo: Perch\351 partirono?"
 
 	},
 	{
 		11,		// cave voice 11
-		"Vivono ancora, nelle stelle? Nelle profondit\205 "
+		"Vivono ancora, nelle stelle? Nelle profondit\340 "
 		"dell'oceano? Nel vento?"
 	},
 	{
@@ -1099,17 +1099,17 @@ const IntroDialogue introDialogueCave4[][4] = {
 	{ { // French fan translation
 		10,		// cave voice 10
 		"Aujourd'hui nous voyons le ciel, les terres, et "
-		"l'eau dont nous sommes les h\202ritiers, Et "
-		"nous nous demandons: pourquoi sont-ils partis?" // Partis \205 la ligne ?????
+		"l'eau dont nous sommes les h\351ritiers, Et "
+		"nous nous demandons: pourquoi sont-ils partis?" // Partis \340 la ligne ?????
 	},
 	{
 		11,		// cave voice 11
-		"Vivent-ils encore, dans les \202toiles? dans les "
-		"profondeurs des oc\202ans? dans le vent?"
+		"Vivent-ils encore, dans les \351toiles? dans les "
+		"profondeurs des oc\351ans? dans le vent?"
 	},
 	{
 		12,		// cave voice 12
-		"Nous nous demandons: leur destin f\223t-il bon "
+		"Nous nous demandons: leur destin f\364t-il bon "
 		"ou mauvais?"
 	},
 	{
@@ -1156,7 +1156,7 @@ const IntroCredit creditsValley[] = {
 	{Common::JA_JPN, kITECreditsAny, kITECreditsHeader, "Producer"},
 	{Common::UNK_LANG, kITECreditsAny, kITECreditsText, "Walter Hochbrueckner"},
 	{Common::EN_ANY, kITECreditsAny, kITECreditsHeader, "Executive Producer"},
-	{Common::DE_DEU, kITECreditsAny, kITECreditsHeader, "Ausf\201hrender Produzent"},
+	{Common::DE_DEU, kITECreditsAny, kITECreditsHeader, "Ausf\374hrender Produzent"},
 	{Common::IT_ITA, kITECreditsAny, kITECreditsHeader, "Produttore Esecutivo"},
 	{Common::FR_FRA, kITECreditsAny, kITECreditsHeader, "Producteur Executif"},
 	{Common::JA_JPN, kITECreditsAny, kITECreditsHeader, "Executive Producer"},
@@ -1187,7 +1187,7 @@ const IntroCredit creditsTreeHouse1[] = {
 	{Common::DE_DEU, kITECreditsAny, kITECreditsText, "Robert Leh, Len Wein und Bill Rotsler"},
 	{Common::IT_ITA, kITECreditsAny, kITECreditsHeader, "Sceneggiatura e Dialoghi"},
 	{Common::IT_ITA, kITECreditsAny, kITECreditsText, "Robert Leh, Len Wein e Bill Rotsler"},
-	{Common::FR_FRA, kITECreditsAny, kITECreditsHeader, "Sc\202nario et Dialogues"},
+	{Common::FR_FRA, kITECreditsAny, kITECreditsHeader, "Sc\351nario et Dialogues"},
 	{Common::FR_FRA, kITECreditsAny, kITECreditsText, "Robert Leh, Len Wein et Bill Rotsler"},
 	{Common::JA_JPN, kITECreditsAny, kITECreditsHeader, "Screenplay and Dialog"},
 	{Common::JA_JPN, kITECreditsAny, kITECreditsText, "Robert Leh, Len Wein, and Bill Rotsler"},
@@ -1253,7 +1253,7 @@ const IntroCredit creditsFairePath2[] = {
 	{Common::EN_ANY, kITECreditsAny, kITECreditsHeader, "Directed by"},
 	{Common::DE_DEU, kITECreditsAny, kITECreditsHeader, "Regie"},
 	{Common::IT_ITA, kITECreditsAny, kITECreditsHeader, "Regia"},
-	{Common::FR_FRA, kITECreditsAny, kITECreditsHeader, "Dirig\202 par"},
+	{Common::FR_FRA, kITECreditsAny, kITECreditsHeader, "Dirig\351 par"},
 	{Common::JA_JPN, kITECreditsAny, kITECreditsHeader, "Directed by"},
 	{Common::UNK_LANG, kITECreditsAny, kITECreditsText, "Talin"},
 	{Common::FR_FRA, kITECreditsAny, kITECreditsHeader, "Traduction Francaise"},

@@ -58,8 +58,7 @@ enum FontEffectFlags {
 	kFontOutline  = 1 << 0,
 	kFontShadow   = 1 << 1,
 	kFontBold     = 1 << 2,
-	kFontCentered = 1 << 3,
-	kFontDontmap  = 1 << 4
+	kFontCentered = 1 << 3
 };
 
 enum KnownFont {
@@ -157,9 +156,6 @@ class Font {
 	void textDrawRect(KnownFont font, const char *text, const Common::Rect &rect, int color, int effectColor, FontEffectFlags flags) {
 		textDrawRect(knownFont2FontIdx(font), text, rect, color, effectColor, flags);
 	}
-	void setFontMapping(int mapping) {
-		_fontMapping = mapping;
-	}
 
  private:
 	 enum FontId {
@@ -173,7 +169,6 @@ class Font {
 	 };
 
 	 Font::FontId knownFont2FontIdx(KnownFont font);
-	 int translateChar(int charId);
 
 	 int getStringWidth(FontId fontId, const char *text, size_t count, FontEffectFlags flags);
 	 int getHeight(FontId fontId, const char *text, int width, FontEffectFlags flags);
@@ -212,10 +207,7 @@ class Font {
 		 return byteLength;
 	 }
 
-	static const int _charMap[128];
 	SagaEngine *_vm;
-
-	int _fontMapping;
 
 	Common::Array<FontData> _fonts;
 };

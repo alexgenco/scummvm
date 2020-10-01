@@ -8,7 +8,6 @@ MODULE_OBJS := \
 	console.o \
 	events.o \
 	font.o \
-	font_map.o \
 	gfx.o \
 	image.o \
 	input.o \
