@@ -245,8 +245,8 @@ void KeyboardProcess(CORO_PARAM, const void *) {
 			if (TinselV2 && (evt.kbd.hasFlags(Common::KBD_ALT)))
 				ProcessKeyEvent(PLR_JUMP);
 			break;
-		case Common::KEYCODE_q:
-			if ((evt.kbd.hasFlags(Common::KBD_CTRL)) || (evt.kbd.hasFlags(Common::KBD_ALT)))
+		case Common::KEYCODE_x:
+			if (evt.kbd.hasFlags(Common::KBD_ALT))
 				ProcessKeyEvent(PLR_QUIT);
 			continue;
 		case Common::KEYCODE_PAGEUP:
