@@ -43,6 +43,21 @@ enum InterfaceUpdateFlags {
 	UPDATE_WHEELDOWN = 16
 };
 
+enum SagaKeyCode {
+	kSagaKeyBackspace = 8,
+	kSagaKeyReturn    = 13,
+	kSagaKeyCtrlO     = 15,
+	kSagaKeyEscape    = 27,
+
+	kSagaKeyHome      = 327,
+	kSagaKeyUp        = 328,
+	kSagaKeyLeft      = 331,
+	kSagaKeyRight     = 333,
+	kSagaKeyEnd       = 335,
+	kSagaKeyDown      = 336,
+	kSagaKeyDelete    = 339
+};
+
 #define CONVERSE_MAX_TEXTS 64
 #define CONVERSE_MAX_WORK_STRING 256
 
@@ -227,6 +242,7 @@ public:
 	void drawStatusBar();
 	void setVerbState(int verb, int state);
 
+	uint16 getKey(const Common::KeyState keystate) const;
 	bool processAscii(Common::KeyState keystate);
 
 	void keyBoss();
@@ -348,8 +364,8 @@ private:
 	void drawVerbPanelText(PanelButton *panelButton, KnownColor textKnownColor, KnownColor textShadowKnownColor);
 	void drawVerbPanel(PanelButton* panelButton);
 	void calcOptionSaveSlider();
-	bool processTextInput(Common::KeyState keystate);
-	void processStatusTextInput(Common::KeyState keystate);
+	bool processTextInput(uint16 key);
+	void processStatusTextInput(uint16 key);
 
 public:
 	void converseClear();

@@ -485,22 +485,33 @@ void Interface::setMode(int mode) {
 	_vm->_render->setFullRefresh(true);
 }
 
+uint16 Interface::getKey(const Common::KeyState keystate) const {
+	const uint16 key = keystate.getINT16h00hKey(Common::kWindows1252);
+	if (!key)
+		return 0;
+
+	return key & 0xFF ? key & 0xFF : (key >> 8) + 256;
+}
+
 bool Interface::processAscii(Common::KeyState keystate) {
 	// TODO: Checking for Esc and Enter below is a bit hackish, and
 	// probably only works with the English version. Maybe we should
 	// add a flag to the button so it can indicate if it's the default
 	// or cancel button?
-	uint16 ascii = keystate.ascii;
+	uint16 key = getKey(keystate);
+	if (!key)
+		return false;
+
 	int i;
 	PanelButton *panelButton;
 	if (_statusTextInput) {
-		processStatusTextInput(keystate);
+		processStatusTextInput(key);
 		return true;
 	}
 
 	switch (_panelMode) {
 	case kPanelNull:
-		if (keystate.keycode == Common::KEYCODE_ESCAPE) {
+		if (key == kSagaKeyEscape) {
 			if (_vm->_scene->isInIntro()) {
 				_vm->_scene->skipScene();
 			} else {
@@ -516,7 +527,7 @@ bool Interface::processAscii(Common::KeyState keystate) {
 #endif
 		break;
 	case kPanelCutaway:
-		if (keystate.keycode == Common::KEYCODE_ESCAPE) {
+		if (key == kSagaKeyEscape) {
 			if (!_disableAbortSpeeches)
 				_vm->_actor->abortAllSpeeches();
 			_vm->_scene->cutawaySkip();
@@ -529,7 +540,7 @@ bool Interface::processAscii(Common::KeyState keystate) {
 #endif
 		break;
 	case kPanelVideo:
-		if (keystate.keycode == Common::KEYCODE_ESCAPE) {
+		if (key == kSagaKeyEscape) {
 			if (_vm->_scene->isInIntro()) {
 				_vm->_scene->skipScene();
 			} else {
@@ -547,14 +558,14 @@ bool Interface::processAscii(Common::KeyState keystate) {
 		break;
 	case kPanelOption:
 		// TODO: check input dialog keys
-		if (keystate.keycode == Common::KEYCODE_ESCAPE || keystate.keycode == Common::KEYCODE_RETURN) { // Esc or Enter
-			ascii = 'c'; //continue
+		if (key == kSagaKeyEscape || key == kSagaKeyReturn) {
+			key = 'c'; //continue
 		}
 
 		for (i = 0; i < _optionPanel.buttonsCount; i++) {
 			panelButton = &_optionPanel.buttons[i];
 			if (panelButton->type == kPanelButtonOption) {
-				if (panelButton->ascii == ascii) {
+				if (panelButton->ascii == key) {
 					setOption(panelButton);
 					return true;
 				}
@@ -562,20 +573,20 @@ bool Interface::processAscii(Common::KeyState keystate) {
 		}
 		break;
 	case kPanelSave:
-		if (_textInput && processTextInput(keystate)) {
+		if (_textInput && processTextInput(key)) {
 			return true;
 		}
 
-		if (keystate.keycode == Common::KEYCODE_ESCAPE) {
-			ascii = 'c'; // cancel
-		} else if (keystate.keycode == Common::KEYCODE_RETURN) { // Enter
-			ascii = 's'; // save
+		if (key == kSagaKeyEscape) {
+			key = 'c'; // cancel
+		} else if (key == kSagaKeyReturn) {
+			key = 's'; // save
 		}
 
 		for (i = 0; i < _savePanel.buttonsCount; i++) {
 			panelButton = &_savePanel.buttons[i];
 			if (panelButton->type == kPanelButtonSave) {
-				if (panelButton->ascii == ascii) {
+				if (panelButton->ascii == key) {
 					setSave(panelButton);
 					return true;
 				}
@@ -583,16 +594,16 @@ bool Interface::processAscii(Common::KeyState keystate) {
 		}
 		break;
 	case kPanelQuit:
-		if (keystate.keycode == Common::KEYCODE_ESCAPE) {
-			ascii = 'c'; // cancel
-		} else if (keystate.keycode == Common::KEYCODE_RETURN) { // Enter
-			ascii = 'q'; // quit
+		if (key == kSagaKeyEscape) {
+			key = 'c'; // cancel
+		} else if (key == kSagaKeyReturn) {
+			key = 'q'; // quit
 		}
 
 		for (i = 0; i < _quitPanel.buttonsCount; i++) {
 			panelButton = &_quitPanel.buttons[i];
 			if (panelButton->type == kPanelButtonQuit) {
-				if (panelButton->ascii == ascii) {
+				if (panelButton->ascii == key) {
 					setQuit(panelButton);
 					return true;
 				}
@@ -603,7 +614,7 @@ bool Interface::processAscii(Common::KeyState keystate) {
 		for (i = 0; i < _loadPanel.buttonsCount; i++) {
 			panelButton = &_loadPanel.buttons[i];
 			if (panelButton->type == kPanelButtonLoad) {
-				if (panelButton->ascii == ascii) {
+				if (panelButton->ascii == key) {
 					setLoad(panelButton);
 					return true;
 				}
@@ -613,7 +624,7 @@ bool Interface::processAscii(Common::KeyState keystate) {
 	case kPanelMain:
 		for (i = 0; i < _mainPanel.buttonsCount; i++) {
 			panelButton = &_mainPanel.buttons[i];
-			if (panelButton->ascii == ascii) {
+			if (panelButton->ascii == key) {
 				if (panelButton->type == kPanelButtonVerb) {
 					_vm->_script->setVerb(panelButton->id);
 				}
@@ -623,7 +634,7 @@ bool Interface::processAscii(Common::KeyState keystate) {
 				return true;
 			}
 		}
-		if (keystate.keycode == Common::KEYCODE_o && keystate.hasFlags(Common::KBD_CTRL)) { // ctrl-o
+		if (key == kSagaKeyCtrlO) {
 			if (_saveReminderState > 0) {
 				setMode(kPanelOption);
 				return true;
@@ -631,7 +642,7 @@ bool Interface::processAscii(Common::KeyState keystate) {
 		}
 		break;
 	case kPanelConverse:
-		switch (ascii) {
+		switch (key) {
 		case 'x':
 			setMode(kPanelMain);
 			if (_vm->_scene->isITEPuzzleScene())
@@ -655,7 +666,7 @@ bool Interface::processAscii(Common::KeyState keystate) {
 		case '7':
 		case '8':
 		case '9':
-			converseSetPos(ascii);
+			converseSetPos(key);
 			break;
 
 		default:
@@ -666,12 +677,12 @@ bool Interface::processAscii(Common::KeyState keystate) {
 		mapPanelClean();
 		break;
 	case kPanelSceneSubstitute:
-		if (keystate.keycode == Common::KEYCODE_RETURN) {
+		if (key == kSagaKeyReturn) {
 			_vm->_render->clearFlag(RF_DEMO_SUBST);
 			_vm->_gfx->setPalette(_mapSavedPal);
 			setMode(kPanelMain);
 			_vm->_script->setNoPendingVerb();
-		} else if (ascii == 'q' || ascii == 'Q') {
+		} else if (key == 'q' || key == 'Q') {
 			_vm->quitGame();
 		}
 		break;
@@ -681,11 +692,11 @@ bool Interface::processAscii(Common::KeyState keystate) {
 		break;
 	case kPanelProtect:
 		if (_vm->getGameId() == GID_ITE) {
-			if (_textInput && processTextInput(keystate)) {
+			if (_textInput && processTextInput(key)) {
 				return true;
 			}
 
-			if (keystate.keycode == Common::KEYCODE_ESCAPE || keystate.keycode == Common::KEYCODE_RETURN) {
+			if (key == kSagaKeyEscape || key == kSagaKeyReturn) {
 				_vm->_script->wakeUpThreads(kWaitTypeRequest);
 				_vm->_interface->setMode(kPanelMain);
 
@@ -1161,20 +1172,19 @@ void Interface::setLoad(PanelButton *panelButton) {
 	}
 }
 
-void Interface::processStatusTextInput(Common::KeyState keystate) {
-
-	switch (keystate.keycode) {
-	case Common::KEYCODE_ESCAPE:
+void Interface::processStatusTextInput(uint16 key) {
+	switch (key) {
+	case kSagaKeyEscape:
 		_statusTextInputState = kStatusTextInputAborted;
 		_statusTextInput = false;
 		_vm->_script->wakeUpThreads(kWaitTypeStatusTextInput);
 		break;
-	case Common::KEYCODE_RETURN:
+	case kSagaKeyReturn:
 		_statusTextInputState = kStatusTextInputEntered;
 		_statusTextInput = false;
 		_vm->_script->wakeUpThreads(kWaitTypeStatusTextInput);
 		break;
-	case Common::KEYCODE_BACKSPACE:
+	case kSagaKeyBackspace:
 		if (_statusTextInputPos == 0) {
 			break;
 		}
@@ -1185,15 +1195,15 @@ void Interface::processStatusTextInput(Common::KeyState keystate) {
 		if (_statusTextInputPos >= STATUS_TEXT_INPUT_MAX - 1) { // -1 because of the null termination
 			break;
 		}
-		if (Common::isAlnum(keystate.ascii) || (keystate.ascii == ' ')) {
-			_statusTextInputString[_statusTextInputPos++] = keystate.ascii;
+		if (key >= 0x20 && key <= 0x7F) {
+			_statusTextInputString[_statusTextInputPos++] = key;
 			_statusTextInputString[_statusTextInputPos] = 0;
 		}
 	}
 	setStatusText(_statusTextInputString);
 }
 
-bool Interface::processTextInput(Common::KeyState keystate) {
+bool Interface::processTextInput(uint16 key) {
 	char ch[2];
 	char tempString[SAVE_TITLE_SIZE];
 	uint tempWidth;
@@ -1203,19 +1213,19 @@ bool Interface::processTextInput(Common::KeyState keystate) {
 	// in IHNM, to preserve backwards compatibility with older save games
 	uint save_title_size = _vm->getGameId() == GID_ITE ? SAVE_TITLE_SIZE : IHNM_SAVE_TITLE_SIZE;
 
-	switch (keystate.keycode) {
-	case Common::KEYCODE_RETURN:
+	switch (key) {
+	case kSagaKeyReturn:
 		return false;
-	case Common::KEYCODE_ESCAPE:
+	case kSagaKeyEscape:
 		_textInput = false;
 		break;
-	case Common::KEYCODE_BACKSPACE:
+	case kSagaKeyBackspace:
 		if (_textInputPos <= 1) {
 			break;
 		}
 		_textInputPos--;
 		// fall through
-	case Common::KEYCODE_DELETE:
+	case kSagaKeyDelete:
 		if (_textInputPos <= _textInputStringLength) {
 			if (_textInputPos != 1) {
 				strncpy(tempString, _textInputString, _textInputPos - 1);
@@ -1227,27 +1237,26 @@ bool Interface::processTextInput(Common::KeyState keystate) {
 			_textInputStringLength = strlen(_textInputString);
 		}
 		break;
-	case Common::KEYCODE_LEFT:
+	case kSagaKeyLeft:
 		if (_textInputPos > 1) {
 			_textInputPos--;
 		}
 		break;
-	case Common::KEYCODE_RIGHT:
+	case kSagaKeyRight:
 		if (_textInputPos <= _textInputStringLength) {
 			_textInputPos++;
 		}
 		break;
-	case Common::KEYCODE_HOME:
+	case kSagaKeyHome:
 		_textInputPos = 1;
 		break;
-	case Common::KEYCODE_END:
+	case kSagaKeyEnd:
 		_textInputPos = _textInputStringLength + 1;
 		break;
 	default:
-		if (((keystate.ascii <= 255) && (Common::isAlnum(keystate.ascii))) || (keystate.ascii == ' ') ||
-		    (keystate.ascii == '-') || (keystate.ascii == '_')) {
+		if (key >= 0x20 && key <= 0x7F) {
 			if (_textInputStringLength < save_title_size - 1) {
-				ch[0] = keystate.ascii;
+				ch[0] = key;
 				tempWidth = _vm->_font->getStringWidth(kKnownFontSmall, ch, 0, kFontNormal);
 				tempWidth += _vm->_font->getStringWidth(kKnownFontSmall, _textInputString, 0, kFontNormal);
 				if (tempWidth > _textInputMaxWidth) {

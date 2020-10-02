@@ -149,10 +149,7 @@ bool Scene::checkKey() {
 			res = true;
 			break;
 		case Common::EVENT_KEYDOWN:
-			// Don't react to modifier keys alone. The original did
-			// not, and the user may want to change scaler without
-			// terminating the intro.
-			if (event.kbd.ascii)
+			if (_vm->_interface->getKey(event.kbd))
 				res = true;
 			break;
 		default:
