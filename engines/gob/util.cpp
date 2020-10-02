@@ -219,7 +219,7 @@ int16 Util::translateKey(const Common::KeyState &key) {
 		{Common::KEYCODE_F2,        kKeyF2       },
 		{Common::KEYCODE_F3,        kKeyF3       },
 		{Common::KEYCODE_F4,        kKeyF4       },
-		{Common::KEYCODE_F5,        kKeyEscape   },
+		{Common::KEYCODE_F5,        kKeyF5       },
 		{Common::KEYCODE_F6,        kKeyF6       },
 		{Common::KEYCODE_F7,        kKeyF7       },
 		{Common::KEYCODE_F8,        kKeyF8       },
