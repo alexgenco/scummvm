@@ -206,6 +206,8 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_mouseAndKeyboardStat = 0;
 	_leftBtnPressed = 0;
 	_rightBtnPressed = 0;
+	_scrollWheelUp = false;
+	_scrollWheelDown = false;
 	_lastInputScriptTime = 0;
 	_bootParam = 0;
 	_dumpScripts = false;
@@ -1704,7 +1706,7 @@ void ScummEngine::resetScumm() {
 	}
 
 	// all keys are released
-	for (i = 0; i < 512; i++)
+	for (i = 0; i < Common::KEYCODE_LAST; i++)
 		_keyDownMap[i] = false;
 
 	_lastSaveTime = _system->getMillis();

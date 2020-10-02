@@ -164,6 +164,63 @@ enum {
 	MBS_MAX_KEY	= 0x0200
 };
 
+enum ScummKeyCode {
+	SCUMM_KEY_CTRL_C           = 3,
+	SCUMM_KEY_BACKSPACE        = 8,
+	SCUMM_KEY_TAB              = 9,
+	SCUMM_KEY_CTRL_L           = 12,
+	SCUMM_KEY_RETURN           = 13,
+	SCUMM_KEY_CTRL_Q           = 17,
+	SCUMM_KEY_CTRL_R           = 18,
+	SCUMM_KEY_CTRL_S           = 19,
+	SCUMM_KEY_CTRL_T           = 20,
+	SCUMM_KEY_CTRL_V           = 22,
+	SCUMM_KEY_ESCAPE           = 27,
+
+	SCUMM_KEY_PAUSE            = ' ',
+	SCUMM_KEY_TALK_STOP        = '.',
+	SCUMM_KEY_SHIFT_S          = 'S',
+
+	SCUMM_KEY_MUSIC_VOLUME_DEC = '[',
+	SCUMM_KEY_MUSIC_VOLUME_INC = ']',
+
+	SCUMM_KEY_TEXT_SPEED_DEC   = '-',
+	SCUMM_KEY_TEXT_SPEED_INC   = '+',
+
+	SCUMM_KEY_ALT_Q            = 272,
+	SCUMM_KEY_ALT_I            = 279,
+	SCUMM_KEY_ALT_S            = 287,
+	SCUMM_KEY_ALT_X            = 301,
+
+	SCUMM_KEY_F1               = 315,
+	SCUMM_KEY_F2               = 316,
+	SCUMM_KEY_F3               = 317,
+	SCUMM_KEY_F4               = 318,
+	SCUMM_KEY_F5               = 319,
+	SCUMM_KEY_F6               = 320,
+	SCUMM_KEY_F7               = 321,
+	SCUMM_KEY_F8               = 322,
+	SCUMM_KEY_F9               = 323,
+	SCUMM_KEY_F10              = 324,
+	SCUMM_KEY_F11              = 325,
+	SCUMM_KEY_F12              = 326,
+
+	SCUMM_KEY_KP7              = 327,
+	SCUMM_KEY_KP8              = 328,
+	SCUMM_KEY_KP9              = 329,
+	SCUMM_KEY_KP4              = 331,
+	SCUMM_KEY_KP5              = 332,
+	SCUMM_KEY_KP6              = 333,
+	SCUMM_KEY_KP1              = 335,
+	SCUMM_KEY_KP2              = 336,
+	SCUMM_KEY_KP3              = 337,
+
+	SCUMM_KEY_SHIFT_F1         = 340,
+	SCUMM_KEY_SHIFT_F7         = 346,
+	SCUMM_KEY_CTRL_F5          = 354,
+	SCUMM_KEY_ALT_F5           = 364,
+};
+
 struct SentenceTab {
 	byte verb;
 	byte preposition;
@@ -375,14 +432,19 @@ protected:
 
 	// Event handling
 public:
+	uint16 getKey(const Common::KeyState &lastKeyHit) const;
 	void parseEvents();	// Used by IMuseDigital::startSound
 protected:
 	virtual void parseEvent(Common::Event event);
 
 	void waitForTimer(int msec_delay);
 	virtual void processInput();
-	virtual void processKeyboard(Common::KeyState lastKeyHit);
+	virtual void processKeyboard();
 	virtual void clearClickedStatus();
+
+	bool isMainMenuKey() const;
+	bool isRestartKey() const;
+	bool isCutsceneExitKey() const;
 
 	// Cursor/palette
 	void updateCursor();
@@ -481,13 +543,14 @@ public:
 
 protected:
 	Common::KeyState _keyPressed;
-	bool _keyDownMap[512]; // FIXME - 512 is a guess. it's max(kbd.ascii)
+	bool _keyDownMap[Common::KEYCODE_LAST];
 
 	Common::Point _mouse;
 	Common::Point _virtualMouse;
 
 	uint16 _mouseAndKeyboardStat;
 	byte _leftBtnPressed, _rightBtnPressed;
+	bool _scrollWheelUp, _scrollWheelDown;
 
 	/**
 	 * Last time runInputScript was run (measured in terms of OSystem::getMillis()).
