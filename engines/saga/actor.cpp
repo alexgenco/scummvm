@@ -1162,25 +1162,25 @@ void Actor::actorSpeech(uint16 actorId, const char **strings, int stringsCount, 
 	_activeSpeech.playing = false;
 	_activeSpeech.slowModeCharIndex = 0;
 
-	dist = MIN(actor->_screenPosition.x - 10, _vm->getDisplayInfo().width - 10 - actor->_screenPosition.x);
-
-	if (_vm->getGameId() == GID_ITE)
+	if (_vm->getGameId() == GID_ITE) {
+		dist = MIN(actor->_screenPosition.x - 10, _vm->getDisplayInfo().width - 10 - actor->_screenPosition.x);
 		dist = CLIP<int16>(dist, 60, 150);
-	else
-		dist = CLIP<int16>(dist, 120, 300);
 
-	_activeSpeech.speechBox.left = actor->_screenPosition.x - dist;
-	_activeSpeech.speechBox.right = actor->_screenPosition.x + dist;
+		_activeSpeech.speechBox.left = actor->_screenPosition.x - dist;
+		_activeSpeech.speechBox.right = actor->_screenPosition.x + dist;
 
-	if (_activeSpeech.speechBox.left < 10) {
-		_activeSpeech.speechBox.right += 10 - _activeSpeech.speechBox.left;
+		if (_activeSpeech.speechBox.left < 10) {
+			_activeSpeech.speechBox.right += 10 - _activeSpeech.speechBox.left;
+			_activeSpeech.speechBox.left = 10;
+		}
+		if (_activeSpeech.speechBox.right > _vm->getDisplayInfo().width - 10) {
+			_activeSpeech.speechBox.left -= _activeSpeech.speechBox.right - _vm->getDisplayInfo().width - 10;
+			_activeSpeech.speechBox.right = _vm->getDisplayInfo().width - 10;
+		}
+	} else {
 		_activeSpeech.speechBox.left = 10;
-	}
-	if (_activeSpeech.speechBox.right > _vm->getDisplayInfo().width - 10) {
-		_activeSpeech.speechBox.left -= _activeSpeech.speechBox.right - _vm->getDisplayInfo().width - 10;
 		_activeSpeech.speechBox.right = _vm->getDisplayInfo().width - 10;
 	}
-
 }
 
 void Actor::nonActorSpeech(const Common::Rect &box, const char **strings, int stringsCount, int sampleResourceId, int speechFlags) {
