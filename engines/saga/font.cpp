@@ -107,7 +107,7 @@ void Font::loadFont(FontData *font, uint32 fontResourceId) {
 	}
 
 	for (c = 0; c < FONT_CHARCOUNT; c++) {
-		font->normal.fontCharEntry[c].flag = readS.readByte();
+		font->normal.fontCharEntry[c].flag = readS.readSByte();
 	}
 
 	for (c = 0; c < FONT_CHARCOUNT; c++) {
@@ -248,11 +248,13 @@ int Font::getStringWidth(FontId fontId, const char *text, size_t count, FontEffe
 	for (ct = count; *txt && (!count || ct > 0); txt++, ct--) {
 		ch = *txt & 0xFFU;
 		assert(ch < FONT_CHARCOUNT);
+		width += font->normal.fontCharEntry[ch].flag;
 		width += font->normal.fontCharEntry[ch].tracking;
 	}
 
-	if ((flags & kFontBold) || (flags & kFontOutline)) {
-		width += 1;
+	if (_vm->getGameId() == GID_ITE) {
+		if ((flags & kFontBold) || (flags & kFontOutline))
+			width += 1;
 	}
 
 	return width;
@@ -333,6 +335,7 @@ void Font::outFont(const FontStyle &drawFont, const char *text, size_t count, co
 #endif
 		}
 
+		textPoint.x += drawFont.fontCharEntry[c_code].flag;
 		// Get length of character in bytes
 		c_byte_len = ((drawFont.fontCharEntry[c_code].width - 1) / 8) + 1;
 		rowLimit = (_vm->_gfx->getBackBufferHeight() < (textPoint.y + drawFont.header.charHeight)) ? _vm->_gfx->getBackBufferHeight() : textPoint.y + drawFont.header.charHeight;
