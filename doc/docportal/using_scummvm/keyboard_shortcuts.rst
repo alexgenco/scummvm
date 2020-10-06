@@ -177,16 +177,6 @@ Indiana Jones and the Fate of Atlantis
         Shortcut, Description
         :kbd:`i` ,Displays IQ points
 
-Indiana Jones and the Last Crusade
-------------------------------------
-
-.. csv-table:: 
-  	:widths: 40 60 
-  	:header-rows: 1
-
-        Shortcut, Description
-        :kbd:`i` ,Displays IQ points
-
 Nippon Safes
 ---------------
 
