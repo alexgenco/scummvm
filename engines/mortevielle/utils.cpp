@@ -114,60 +114,43 @@ bool MortevielleEngine::handleEvents() {
  */
 void MortevielleEngine::addKeypress(Common::Event &evt) {
 	// Character to add
-	char ch = evt.kbd.ascii;
-
-	if ((evt.kbd.keycode >= Common::KEYCODE_a) && (evt.kbd.keycode <= Common::KEYCODE_z)) {
-		// Handle alphabetic keys
-		if (evt.kbd.hasFlags(Common::KBD_CTRL))
-			ch = evt.kbd.keycode - Common::KEYCODE_a + 1;
-		else
-			ch = evt.kbd.keycode - Common::KEYCODE_a + 'A';
-	} else if ((evt.kbd.keycode >= Common::KEYCODE_F1) && (evt.kbd.keycode <= Common::KEYCODE_F12)) {
-		// Handle function keys
-		ch = 59 + evt.kbd.keycode - Common::KEYCODE_F1;
-	} else {
-		// Series of special cases
-		switch (evt.kbd.keycode) {
-		case Common::KEYCODE_KP4:
-		case Common::KEYCODE_LEFT:
-			ch = '4';
-			break;
-		case Common::KEYCODE_KP2:
-		case Common::KEYCODE_DOWN:
-			ch = '2';
-			break;
-		case Common::KEYCODE_KP6:
-		case Common::KEYCODE_RIGHT:
-			ch = '6';
-			break;
-		case Common::KEYCODE_KP8:
-		case Common::KEYCODE_UP:
-			ch = '8';
-			break;
-		case Common::KEYCODE_KP7:
-			ch = '7';
-			break;
-		case Common::KEYCODE_KP1:
-			ch = '1';
-			break;
-		case Common::KEYCODE_KP9:
-			ch = '9';
-			break;
-		case Common::KEYCODE_KP3:
-			ch = '3';
-			break;
-		case Common::KEYCODE_KP5:
-			ch = '5';
-			break;
-		case Common::KEYCODE_RETURN:
-			ch = '\13';
-			break;
-		case Common::KEYCODE_ESCAPE:
-			ch = '\33';
-			break;
-		default:
-			break;
-		}
+	const uint16 key = evt.kbd.getINT16h00hKey();
+	char ch = key & 0xFF ? key & 0xFF : key >> 8;
+	// Series of special cases
+	switch (evt.kbd.keycode) {
+	case Common::KEYCODE_KP4:
+	case Common::KEYCODE_LEFT:
+		ch = '4';
+		break;
+	case Common::KEYCODE_KP2:
+	case Common::KEYCODE_DOWN:
+		ch = '2';
+		break;
+	case Common::KEYCODE_KP6:
+	case Common::KEYCODE_RIGHT:
+		ch = '6';
+		break;
+	case Common::KEYCODE_KP8:
+	case Common::KEYCODE_UP:
+		ch = '8';
+		break;
+	case Common::KEYCODE_KP7:
+		ch = '7';
+		break;
+	case Common::KEYCODE_KP1:
+		ch = '1';
+		break;
+	case Common::KEYCODE_KP9:
+		ch = '9';
+		break;
+	case Common::KEYCODE_KP3:
+		ch = '3';
+		break;
+	case Common::KEYCODE_KP5:
+		ch = '5';
+		break;
+	default:
+		break;
 	}
 
 	if (ch != 0)
