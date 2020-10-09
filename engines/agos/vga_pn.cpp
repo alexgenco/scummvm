@@ -116,7 +116,7 @@ void AGOSEngine::vc36_pause() {
 		windowPutChar(_windowArray[2], *message1);
 
 	while (!shouldQuit()) {
-		if (_keyPressed.ascii != 0)
+		if (_keyPressed.getINT16h00hKey() != 0)
 			break;
 		delay(1);
 	}

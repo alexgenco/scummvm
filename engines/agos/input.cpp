@@ -675,7 +675,7 @@ bool AGOSEngine::processSpecialKeys() {
 		break;
 	}
 
-	switch (_keyPressed.ascii) {
+	switch (_keyPressed.getINT16hCharacter()) {
 	case 't':
 		if (getGameType() == GType_FF || (getGameType() == GType_SIMON2 && (getFeatures() & GF_TALKIE)) ||
 			((getFeatures() & GF_TALKIE) && _language != Common::EN_ANY && _language != Common::DE_DEU)) {

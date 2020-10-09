@@ -493,6 +493,18 @@ void AGOSEngine::delay(uint amount) {
 				}
 
 				_keyPressed = event.kbd;
+				switch (getGameType()) {
+				case GType_ELVIRA2:
+				case GType_WW:
+				case GType_SIMON1:
+				case GType_SIMON2:
+				case GType_FF:
+				case GType_PP:
+					_keyPressed.flags &= ~Common::KBD_CTRL;
+					break;
+				default:
+					break;
+				}
 				break;
 			case Common::EVENT_MOUSEMOVE:
 				break;
