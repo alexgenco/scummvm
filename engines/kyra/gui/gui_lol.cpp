@@ -2578,16 +2578,14 @@ int GUI_LoL::getInput() {
 	}
 
 	int inputFlag = _vm->checkInput(_menuButtonList);
+	char inputKey = _keyPressed.getINT16hCharacter();
 
-	if (_currentMenu == &_savenameMenu && _keyPressed.ascii) {
-		char inputKey = _keyPressed.ascii;
-		Util::convertISOToDOS(inputKey);
-
+	if (_currentMenu == &_savenameMenu && inputKey) {
 		if ((uint8)inputKey > 31 && (uint8)inputKey < (_vm->gameFlags().lang == Common::JA_JPN ? 128 : 226)) {
 			_saveDescription[strlen(_saveDescription) + 1] = 0;
 			_saveDescription[strlen(_saveDescription)] = inputKey;
 			inputFlag |= 0x8000;
-		} else if (_keyPressed.keycode == Common::KEYCODE_BACKSPACE && strlen(_saveDescription)) {
+		} else if (inputKey == Common::ASCII_BACKSPACE && strlen(_saveDescription)) {
 			_saveDescription[strlen(_saveDescription) - 1] = 0;
 			inputFlag |= 0x8000;
 		}

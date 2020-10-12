@@ -2765,11 +2765,11 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 			for (Common::List<KyraEngine_v1::Event>::const_iterator evt = _vm->_eventList.begin(); evt != _vm->_eventList.end(); ++evt) {
 				if (evt->event.type == Common::EVENT_KEYDOWN) {
 					_keyPressed = evt->event.kbd;
-					in = _keyPressed.ascii;
+					in = _keyPressed.getINT16hCharacter();
 
 					if (_vm->_flags.platform == Common::kPlatformFMTowns && _keyPressed.ascii > 31 && _keyPressed.ascii < 123) {
 						Common::String s;
-						s.insertChar(in & 0xff, 0);
+						s.insertChar(_keyPressed.ascii & 0xff, 0);
 						s = _vm->convertAsciiToSjis(s);
 						if (s.empty()) {
 							in = 0;
@@ -2785,7 +2785,7 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 			_vm->removeInputTop();
 		}
 
-		if (_keyPressed.keycode == Common::KEYCODE_BACKSPACE) {
+		if (in == Common::ASCII_BACKSPACE) {
 			if (pos > 0 && pos < len ) {
 				for (int i = pos; i < len; i++) {
 					if (bytesPerChar == 2 && dest[i * bytesPerChar] & 0x80) {
@@ -2901,13 +2901,13 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 		}
 		_screen->updateScreen();
 
-	} while (_keyPressed.keycode != Common::KEYCODE_RETURN && _keyPressed.keycode != Common::KEYCODE_ESCAPE && !_vm->shouldQuit());
+	} while (in != Common::ASCII_RETURN && in != Common::ASCII_ESCAPE && !_vm->shouldQuit());
 
 	delete[] segaCharBuf;
 
 	lolKeymap->setEnabled(true);
 
-	return _keyPressed.keycode == Common::KEYCODE_ESCAPE ? -1 : len;
+	return in == Common::ASCII_ESCAPE ? -1 : len;
 }
 
 int GUI_EoB::checkClickableCharactersSelection() {
@@ -2980,11 +2980,9 @@ int GUI_EoB::checkClickableCharactersSelection() {
 				printClickableCharacters((_clickableCharactersPage + 1) % 3);
 				break;
 			case 1:
-				_keyPressed.keycode = Common::KEYCODE_RETURN;
-				break;
+				return Common::ASCII_ESCAPE;
 			case 2:
-				_keyPressed.keycode = Common::KEYCODE_BACKSPACE;
-				break;
+				return Common::ASCII_BACKSPACE;
 			default:
 				break;
 			}

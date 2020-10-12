@@ -692,16 +692,14 @@ void GUI_LoK::redrawTextfield() {
 }
 
 void GUI_LoK::updateSavegameString() {
+	char inputKey = _keyPressed.getINT16hCharacter();
 	int length;
 
-	if (_keyPressed.keycode) {
+	if (inputKey) {
 		length = strlen(_savegameName);
 		_screen->_charSpacing = -2;
 		int width = _screen->getTextWidth(_savegameName) + 7;
 		_screen->_charSpacing = 0;
-
-		char inputKey = _keyPressed.ascii;
-		Util::convertISOToDOS(inputKey);
 
 		if ((uint8)inputKey > 31 && (uint8)inputKey < (_vm->gameFlags().lang == Common::JA_JPN ? 128 : 226)) {
 			if ((length < ARRAYSIZE(_savegameName) - 1) && (width <= 240)) {
@@ -709,14 +707,13 @@ void GUI_LoK::updateSavegameString() {
 				_savegameName[length + 1] = 0;
 				redrawTextfield();
 			}
-		} else if (_keyPressed.keycode == Common::KEYCODE_BACKSPACE ||
+		} else if (inputKey == Common::ASCII_BACKSPACE ||
 		           _keyPressed.keycode == Common::KEYCODE_DELETE) {
 			if (length > 0) {
 				_savegameName[length - 1] = 0;
 				redrawTextfield();
 			}
-		} else if (_keyPressed.keycode == Common::KEYCODE_RETURN ||
-		           _keyPressed.keycode == Common::KEYCODE_KP_ENTER) {
+		} else if (inputKey == Common::ASCII_RETURN) {
 			_displaySubMenu = false;
 		}
 	}
