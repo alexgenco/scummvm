@@ -1248,7 +1248,8 @@ void Dialogs::InvLoadGame() {
  * Returns true if the string was altered.
  */
 #ifndef JAPAN
-bool Dialogs::UpdateString(const Common::KeyState &kbd) {
+bool Dialogs::UpdateString(const uint16 key) {
+	const char c = key & 0xFF;
 	int cpos;
 
 	if (!cd.editableRgroup)
@@ -1256,21 +1257,20 @@ bool Dialogs::UpdateString(const Common::KeyState &kbd) {
 
 	cpos = strlen(_saveGameDesc) - 1;
 
-	if (kbd.ascii == 0)
+	if (c == 0)
 		return false;
 
-	if (kbd.keycode == Common::KEYCODE_BACKSPACE) {
+	if (key == kTinselKeyBackspace) {
 		if (!cpos)
 			return false;
 		_saveGameDesc[cpos] = 0;
 		cpos--;
 		_saveGameDesc[cpos] = CURSOR_CHAR;
 		return true;
-		//	} else if (isalnum(c) || c == ',' || c == '.' || c == '\'' || (c == ' ' && cpos != 0)) {
-	} else if (IsCharImage(_vm->_font->GetTagFontHandle(), kbd.ascii) || (kbd.ascii == ' ' && cpos != 0)) {
+	} else if (IsCharImage(_vm->_font->GetTagFontHandle(), c) || (c == ' ' && cpos != 0)) {
 		if (cpos == SG_DESC_LEN)
 			return false;
-		_saveGameDesc[cpos] = kbd.ascii;
+		_saveGameDesc[cpos] = c;
 		cpos++;
 		_saveGameDesc[cpos] = CURSOR_CHAR;
 		_saveGameDesc[cpos + 1] = 0;
@@ -1283,22 +1283,17 @@ bool Dialogs::UpdateString(const Common::KeyState &kbd) {
 /**
  * Keystrokes get sent here when load/save screen is up.
  */
-static bool InvKeyIn(const Common::KeyState &kbd) {
-	if (kbd.keycode == Common::KEYCODE_PAGEUP ||
-	    kbd.keycode == Common::KEYCODE_PAGEDOWN ||
-	    kbd.keycode == Common::KEYCODE_HOME ||
-	    kbd.keycode == Common::KEYCODE_END)
+static bool InvKeyIn(const uint16 &key) {
+	if (key == kTinselKeyPageUp ||
+	    key == kTinselKeyPageDown ||
+	    key == kTinselKeyHome ||
+	    key == kTinselKeyEnd ||
+	    key == kTinselKeyReturn ||
+	    key == kTinselKeyEscape) {
 		return true; // Key needs processing
-
-	if (kbd.keycode == 0 && kbd.ascii == 0) {
-		;
-	} else if (kbd.keycode == Common::KEYCODE_RETURN) {
-		return true; // Key needs processing
-	} else if (kbd.keycode == Common::KEYCODE_ESCAPE) {
-		return true; // Key needs processing
-	} else {
+	} else if (key) {
 #ifndef JAPAN
-		if (_vm->_dialogs->UpdateString(kbd)) {
+		if (_vm->_dialogs->UpdateString(key)) {
 			/*
 			* Delete display of text currently being edited,
 			* and replace it with freshly edited text.
@@ -1314,7 +1309,7 @@ static bool InvKeyIn(const Common::KeyState &kbd) {
 			    _vm->_font->GetTagFontHandle(), 0);
 			if (MultiRightmost(_vm->_dialogs->_iconArray[HL3]) > MAX_NAME_RIGHT) {
 				MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _vm->_dialogs->_iconArray[HL3]);
-				_vm->_dialogs->UpdateString(Common::KeyState(Common::KEYCODE_BACKSPACE));
+				_vm->_dialogs->UpdateString(kTinselKeyBackspace);
 				_vm->_dialogs->_iconArray[HL3] = ObjectTextOut(
 				    _vm->_bg->GetPlayfieldList(FIELD_STATUS), _vm->_dialogs->_saveGameDesc, 0,
 				    _vm->_dialogs->CurrentInventoryX() + cd.box[cd.selBox].xpos + 2,

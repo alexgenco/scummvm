@@ -345,7 +345,7 @@ public:
 	void FillInInventory();
 	void InvCursor(InvCursorFN fn, int CurX, int CurY);
 	INV_OBJECT *GetInvObject(int id);
-	bool UpdateString(const Common::KeyState &kbd);
+	bool UpdateString(const uint16 key);
 	bool InventoryIsActive() { return _inventoryState == ACTIVE_INV; }
 	bool IsMixingDeskControl() { return _invDragging == ID_MDCONT; }
 	int CurrentInventoryX() { return _invD[_activeInv].inventoryX; }

@@ -190,29 +190,34 @@ void KeyboardProcess(CORO_PARAM, const void *) {
 		if (evt.type == Common::EVENT_KEYUP)
 			continue;
 
+		uint16 key = evt.kbd.getINT16h00hKey(Common::kWindows1252);
+		if (key & 0xFF)
+			key &= 0xFF;
+		if (!key)
+			continue;
+
 		if (_vm->_keyHandler != NULL)
 			// Keyboard is hooked, so pass it on to that handler first
-			if (!_vm->_keyHandler(evt.kbd))
+			if (!_vm->_keyHandler(key))
 				continue;
 
-		switch (evt.kbd.keycode) {
+		switch (key) {
 		/*** SPACE = WALKTO ***/
-		case Common::KEYCODE_SPACE:
+		case kTinselKeyWalkTo:
 			ProcessKeyEvent(PLR_WALKTO);
 			continue;
 
 		/*** RETURN = ACTION ***/
-		case Common::KEYCODE_RETURN:
-		case Common::KEYCODE_KP_ENTER:
+		case kTinselKeyReturn:
 			ProcessKeyEvent(PLR_ACTION);
 			continue;
 
 		/*** l = LOOK ***/
-		case Common::KEYCODE_l:		// LOOK
+		case 'l':
 			ProcessKeyEvent(PLR_LOOK);
 			continue;
 
-		case Common::KEYCODE_ESCAPE:
+		case kTinselKeyEscape:
 			ProcessKeyEvent(PLR_ESCAPE);
 			continue;
 
@@ -225,44 +230,39 @@ void KeyboardProcess(CORO_PARAM, const void *) {
 			continue;
 #endif
 
-		case Common::KEYCODE_1:
-		case Common::KEYCODE_F1:
+		case '1':
+		case kTinselKeyF1:
 			// Options dialog
 			ProcessKeyEvent(PLR_MENU);
 			continue;
-		case Common::KEYCODE_5:
-		case Common::KEYCODE_F5:
+		case '5':
+		case kTinselKeyF5:
 			// Save game
 			ProcessKeyEvent(PLR_SAVE);
 			continue;
-		case Common::KEYCODE_7:
-		case Common::KEYCODE_F7:
+		case '7':
+		case kTinselKeyF7:
 			// Load game
 			ProcessKeyEvent(PLR_LOAD);
 			continue;
-		case Common::KEYCODE_m:
+		case kTinselKeyAltM:
 			// Debug facility - scene hopper
-			if (TinselV2 && (evt.kbd.hasFlags(Common::KBD_ALT)))
+			if (TinselV2)
 				ProcessKeyEvent(PLR_JUMP);
 			break;
-		case Common::KEYCODE_x:
-			if (evt.kbd.hasFlags(Common::KBD_ALT))
+		case kTinselKeyAltX:
 				ProcessKeyEvent(PLR_QUIT);
 			continue;
-		case Common::KEYCODE_PAGEUP:
-		case Common::KEYCODE_KP9:
+		case kTinselKeyPageUp:
 			ProcessKeyEvent(PLR_PGUP);
 			continue;
-		case Common::KEYCODE_PAGEDOWN:
-		case Common::KEYCODE_KP3:
+		case kTinselKeyPageDown:
 			ProcessKeyEvent(PLR_PGDN);
 			continue;
-		case Common::KEYCODE_HOME:
-		case Common::KEYCODE_KP7:
+		case kTinselKeyHome:
 			ProcessKeyEvent(PLR_HOME);
 			continue;
-		case Common::KEYCODE_END:
-		case Common::KEYCODE_KP1:
+		case kTinselKeyEnd:
 			ProcessKeyEvent(PLR_END);
 			continue;
 		default:

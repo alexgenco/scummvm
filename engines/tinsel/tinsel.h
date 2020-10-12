@@ -84,7 +84,30 @@ enum TinselKeyDirection {
 	MSK_DIRECTION = MSK_LEFT | MSK_RIGHT | MSK_UP | MSK_DOWN
 };
 
-typedef bool (*KEYFPTR)(const Common::KeyState &);
+enum TinselKeyCode {
+	kTinselKeyBackspace = 8,
+	kTinselKeyReturn    = 13,
+	kTinselKeyEscape    = 27,
+	kTinselKeyWalkTo    = ' ',
+
+	kTinselKeyAltX      = 0x2D00,
+	kTinselKeyAltM      = 0x3200,
+
+	kTinselKeyF1        = 0x3B00,
+	kTinselKeyF5        = 0x3F00,
+	kTinselKeyF7        = 0x4100,
+
+	kTinselKeyHome      = 0x4700,
+	kTinselKeyUp        = 0x4800,
+	kTinselKeyPageUp    = 0x4900,
+	kTinselKeyLeft      = 0x4B00,
+	kTinselKeyRight     = 0x4D00,
+	kTinselKeyEnd       = 0x4F00,
+	kTinselKeyDown      = 0x5000,
+	kTinselKeyPageDown  = 0x5100
+};
+
+typedef bool (*KEYFPTR)(const uint16 &);
 
 #define	SCREEN_WIDTH	(_vm->screen().w)	// PC screen dimensions
 #define	SCREEN_HEIGHT	(_vm->screen().h)
