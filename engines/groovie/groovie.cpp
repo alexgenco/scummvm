@@ -269,7 +269,7 @@ Common::Error GroovieEngine::run() {
 			switch (ev.type) {
 			case Common::EVENT_KEYDOWN:
 				// Send the event to the scripts
-				_script->setKbdChar(ev.kbd.ascii);
+				_script->setKbdChar(ev.kbd.getINT16hCharacter());
 
 				// Continue the script execution to handle the key
 				_waitingForInput = false;
