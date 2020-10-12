@@ -322,10 +322,11 @@ void ToucheEngine::handleOptions(int forceDisplay) {
 					break;
 				case Common::EVENT_KEYDOWN:
 					if (menuData.mode == kMenuSaveStateMode) {
-						if (event.kbd.keycode == Common::KEYCODE_BACKSPACE) {
+						const char chr = event.kbd.getINT16hCharacter();
+						if (chr == kToucheKeyBackspace) {
 							menuData.removeLastCharFromDescription(_saveLoadCurrentSlot);
 						} else {
-							menuData.addCharToDescription(_saveLoadCurrentSlot, (char)event.kbd.ascii);
+							menuData.addCharToDescription(_saveLoadCurrentSlot, chr);
 						}
 						doRedraw = true;
 					}

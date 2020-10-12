@@ -408,41 +408,64 @@ void ToucheEngine::mainLoop() {
 
 void ToucheEngine::processEvents(bool handleKeyEvents) {
 	Common::Event event;
+	uint16 key;
 	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
 			if (!handleKeyEvents) {
 				break;
 			}
-			_flagsTable[600] = event.kbd.keycode;
-			if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
-				if (_displayQuitDialog) {
-					if (displayQuitDialog()) {
-						quitGame();
-					}
-				}
-			} else if (event.kbd.keycode == Common::KEYCODE_F5) {
-				if (_flagsTable[618] == 0 && !_hideInventoryTexts) {
-					handleOptions(0);
-				}
-			} else if (event.kbd.keycode == Common::KEYCODE_F9) {
-				_fastWalkMode = true;
-			} else if (event.kbd.keycode == Common::KEYCODE_F10) {
-				_fastWalkMode = false;
-			}
 			if (event.kbd.hasFlags(Common::KBD_CTRL)) {
 				if (event.kbd.keycode == Common::KEYCODE_f) {
 					_fastMode = !_fastMode;
 				}
-			} else {
-				if (event.kbd.keycode == Common::KEYCODE_t) {
+			}
+
+			key = event.kbd.getINT16h00hKey();
+			if (!key)
+				break;
+
+			if (key & 0xFF) {
+				key &= 0xFF;
+				_flagsTable[600] = key;
+				switch (key) {
+				case kToucheKeyEscape:
+					if (_displayQuitDialog) {
+						if (displayQuitDialog()) {
+							quitGame();
+						}
+					}
+					break;
+				case kToucheKeySwitchTalkMode:
 					++_talkTextMode;
 					if (_talkTextMode == kTalkModeCount) {
 						_talkTextMode = 0;
 					}
 					displayTextMode(-(92 + _talkTextMode));
-				} else if (event.kbd.keycode == Common::KEYCODE_SPACE) {
+					break;
+				case kToucheKeySkipText:
 					updateKeyCharTalk(2);
+					break;
+				default:
+					break;
+				}
+			} else {
+				key >>= 8;
+				switch (key) {
+				case kToucheKeyAltX:
+				case kToucheKeyF5:
+					if (_flagsTable[618] == 0 && !_hideInventoryTexts) {
+						handleOptions(0);
+					}
+					break;
+				case kToucheKeyF9:
+					_fastWalkMode = true;
+					break;
+				case kToucheKeyF10:
+					_fastWalkMode = false;
+					break;
+				default:
+					break;
 				}
 			}
 			break;

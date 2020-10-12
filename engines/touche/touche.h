@@ -341,6 +341,20 @@ enum {
 	kMaxSaveStates = 100
 };
 
+enum ToucheKeyCodes {
+	kToucheKeyBackspace      = 8,
+	kToucheKeyReturn         = 13,
+	kToucheKeyEscape         = 27,
+	kToucheKeySkipText       = ' ',
+	kToucheKeySwitchTalkMode = 't',
+
+	kToucheKeyAltX           = 0x2D,
+
+	kToucheKeyF5             = 0x3F,
+	kToucheKeyF9             = 0x43,
+	kToucheKeyF10            = 0x44
+};
+
 enum StringType {
 	kStringTypeDefault,
 	kStringTypeConversation
@@ -425,7 +439,7 @@ struct MenuData {
 	void addCharToDescription(int slot, char chr) {
 		char *description = saveLoadDescriptionsTable[slot];
 		int descriptionLen = strlen(description);
-		if (descriptionLen < 32 && Common::isPrint(chr)) {
+		if (descriptionLen < 32 && (uint8)chr >= 0x20) {
 			description[descriptionLen] = chr;
 			description[descriptionLen + 1] = 0;
 		}
