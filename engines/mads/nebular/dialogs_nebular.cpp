@@ -435,7 +435,6 @@ TextDialog(vm, FONT_INTERFACE, Common::Point(-1, -1), 32) {
 void CopyProtectionDialog::show() {
 	draw();
 
-	Common::KeyState curKey;
 	const Common::Rect inputArea(110, 165, 210, 175);
 	MSurface *origInput = new MSurface(inputArea.width(), inputArea.height());
 	_vm->_screen->frameRect(inputArea, TEXTDIALOG_BLACK);
@@ -454,14 +453,14 @@ void CopyProtectionDialog::show() {
 			if (_vm->shouldQuit())
 				break;
 
-			curKey = _vm->_events->getKey();
+			const char c = _vm->_events->getKey().getINT16hCharacter();
 
-			if (curKey.keycode == Common::KEYCODE_RETURN || curKey.keycode == Common::KEYCODE_KP_ENTER)
+			if (c == Common::ASCII_RETURN)
 				break;
-			else if (curKey.keycode == Common::KEYCODE_BACKSPACE)
+			else if (c == Common::ASCII_BACKSPACE)
 				_textInput.deleteLastChar();
 			else if (_textInput.size() < 14)
-				_textInput += curKey.ascii;
+				_textInput += c;
 
 			_vm->_events->_pendingKeys.clear();
 		} else {
