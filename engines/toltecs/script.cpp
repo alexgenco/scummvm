@@ -990,18 +990,8 @@ void ScriptInterpreter::sfHandleInput() {
 	if (_vm->_rightButtonDown) {
 		keyCode = 1;
 	} else {
-		// Convert keyboard scancode to IBM PC scancode.
-		// Only scancodes known to be used (so far) are converted.
-		switch (_vm->_keyState.keycode) {
-		case Common::KEYCODE_ESCAPE:
-			keyCode = 1;
-			break;
-		case Common::KEYCODE_F10:
-			keyCode = 68;
-			break;
-		default:
-			break;
-		}
+		_vm->_keyState.flags = 0;
+		keyCode = _vm->_keyState.getINT16h10hKey() >> 8;
 	}
 	localWrite16(varOfs, keyCode);
 }
