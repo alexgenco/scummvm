@@ -61,27 +61,26 @@ void TextInput::draw() {
 }
 
 bool TextInput::KeypressMsg(CKeypressMsg &msg) {
-	uint16 c = msg._keyState.ascii;
-	//TreeItem *respondTo = _respondTo;
+	const char c = msg._keyState.getINT16hCharacter();
 
-	if (c >= ' ' && c <= 0x7f) {
+	if ((uint8)c >= 0x20) {
 		// Printable character
-		if (_text.size() < _maxCharacters && (!_isNumeric || (c >= '0' && c <= '9'))) {
-			_text += msg._keyState.ascii;
+		if (_text.size() < _maxCharacters && (!_isNumeric || Common::isDigit(c))) {
+			_text += c;
 			setDirty();
 		}
-	} else if (msg._keyState.keycode == Common::KEYCODE_BACKSPACE || msg._keyState.keycode == Common::KEYCODE_LEFT) {
+	} else if (c == Common::ASCII_BACKSPACE || msg._keyState.keycode == Common::KEYCODE_LEFT) {
 		if (!_text.empty()) {
 			_text.deleteLastChar();
 			setDirty();
 		}
-	} else if (msg._keyState.keycode == Common::KEYCODE_RETURN || msg._keyState.keycode == Common::KEYCODE_KP_ENTER) {
+	} else if (c == Common::ASCII_RETURN) {
 		_game->_textCursor->setVisible(false);
 		hide();
 
 		CTextInputMsg inputMsg(_text, false);
 		inputMsg.execute(_respondTo);
-	} else if (msg._keyState.keycode == Common::KEYCODE_ESCAPE) {
+	} else if (c == Common::ASCII_ESCAPE) {
 		_game->_textCursor->setVisible(false);
 		hide();
 
