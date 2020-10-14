@@ -28,7 +28,8 @@ namespace Ultima {
 namespace Ultima4 {
 
 bool ReagentsMenuController::keyPressed(int key) {
-	switch (key) {
+	const char c = key & 0xFF;
+	switch (c) {
 	case 'a':
 	case 'b':
 	case 'c':
@@ -38,10 +39,10 @@ bool ReagentsMenuController::keyPressed(int key) {
 	case 'g':
 	case 'h': {
 		// Select the corresponding reagent (if visible)
-		Menu::MenuItemList::iterator mi = _menu->getById(key - 'a');
+		Menu::MenuItemList::iterator mi = _menu->getById(c - 'a');
 		if ((*mi)->isVisible()) {
-			_menu->setCurrent(_menu->getById(key - 'a'));
-			keyPressed(Common::KEYCODE_SPACE);
+			_menu->setCurrent(_menu->getById(c - 'a'));
+			keyPressed(kUltimaKeySpace);
 		}
 		break;
 	}

@@ -302,20 +302,10 @@ void EventHandler::handleMouseButtonUpEvent(const Common::Event &event, Controll
 }
 
 void EventHandler::handleKeyDownEvent(const Common::Event &event, Controller *controller, updateScreenCallback updateScreen) {
-	int key;
-	bool processed;
-
-	key = (event.kbd.ascii != 0 && event.kbd.ascii < 128) ?
-		event.kbd.ascii : (int)event.kbd.keycode;
-
-	key += (event.kbd.flags & (Common::KBD_CTRL |
-		Common::KBD_ALT | Common::KBD_META)) << 16;
-
-	debug(1, "key event: sym = %d, mod = %d; translated = %d",
-		event.kbd.keycode, event.kbd.flags, key);
-
-	// handle the keypress
-	processed = controller->notifyKeyPressed(key);
+	const int key = event.kbd.getINT16h00hKey();
+	bool processed = false;
+	if (key)
+		processed = controller->notifyKeyPressed(key);
 
 	if (processed) {
 		if (updateScreen)

@@ -30,18 +30,25 @@ namespace Ultima {
 namespace Ultima4 {
 
 bool ZtatsController::keyPressed(int key) {
+	const char c = key & 0xFF;
+
 	switch (key) {
-	case Common::KEYCODE_RETURN:
+	case kUltimaKeyReturn:
 		keybinder(KEYBIND_ESCAPE);
 		return true;
-	case Common::KEYCODE_UP:
-	case Common::KEYCODE_LEFT:
+	case kUltimaKeyUp:
+	case kUltimaKeyLeft:
 		g_context->_stats->prevItem();
 		return true;
-	case Common::KEYCODE_DOWN:
-	case Common::KEYCODE_RIGHT:
+	case kUltimaKeyDown:
+	case kUltimaKeyRight:
 		g_context->_stats->nextItem();
 		return true;
+	default:
+		break;
+	}
+
+	switch (c) {
 	case '1':
 	case '2':
 	case '3':
@@ -50,8 +57,8 @@ bool ZtatsController::keyPressed(int key) {
 	case '6':
 	case '7':
 	case '8':
-		if (g_ultima->_saveGame->_members >= key - '0')
-			g_context->_stats->setView(StatsView(STATS_CHAR1 + key - '1'));
+		if (g_ultima->_saveGame->_members >= c - '0')
+			g_context->_stats->setView(StatsView(STATS_CHAR1 + c - '1'));
 		return true;
 	case '0':
 		g_context->_stats->setView(StatsView(STATS_WEAPONS));

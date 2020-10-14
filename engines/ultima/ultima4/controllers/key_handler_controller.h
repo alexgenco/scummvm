@@ -87,11 +87,6 @@ public:
 	 */
 	bool handle(int key);
 
-	/**
-	 * Returns true if the key or key combination is always ignored by xu4
-	 */
-	virtual bool isKeyIgnored(int key);
-
 protected:
 	Callback _handler;
 	bool _async;

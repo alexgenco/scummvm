@@ -203,7 +203,7 @@ IntroController::IntroController() : Controller(1),
 	_confMenu.add(MI_CONF_GAMEPLAY,            "\010 Enhanced Gameplay Options",  2,  9,/*'g'*/ 11);
 	_confMenu.add(MI_CONF_INTERFACE,           "\010 Enhanced Interface Options", 2, 10,/*'n'*/ 12);
 	_confMenu.add(CANCEL,                      "\017 Main Menu",                  2, 12,/*'m'*/  2);
-	_confMenu.addShortcutKey(CANCEL, ' ');
+	_confMenu.addShortcutKey(CANCEL, kUltimaKeySpace);
 	_confMenu.setClosesMenu(CANCEL);
 
 	/* set the default visibility of the two enhancement menus */
@@ -215,7 +215,7 @@ IntroController::IntroController() : Controller(1),
 	_videoMenu.add(MI_VIDEO_08,         new IntMenuItem("Gamma                %s",  2,  4,/*'a'*/  1, &_settingsChanged._gamma, 50, 150, 10, MENU_OUTPUT_GAMMA));
 	_videoMenu.add(USE_SETTINGS,                   "\010 Use These Settings",  2, 11,/*'u'*/  2);
 	_videoMenu.add(CANCEL,                         "\010 Cancel",              2, 12,/*'c'*/  2);
-	_videoMenu.addShortcutKey(CANCEL, ' ');
+	_videoMenu.addShortcutKey(CANCEL, kUltimaKeySpace);
 	_videoMenu.setClosesMenu(USE_SETTINGS);
 	_videoMenu.setClosesMenu(CANCEL);
 
@@ -235,7 +235,7 @@ IntroController::IntroController() : Controller(1),
 	_soundMenu.add(MI_SOUND_03, new BoolMenuItem("Fading               %s", 2,  4,/*'f'*/  0, &_settingsChanged._volumeFades));
 	_soundMenu.add(USE_SETTINGS,                 "\010 Use These Settings", 2, 11,/*'u'*/  2);
 	_soundMenu.add(CANCEL,                       "\010 Cancel",             2, 12,/*'c'*/  2);
-	_soundMenu.addShortcutKey(CANCEL, ' ');
+	_soundMenu.addShortcutKey(CANCEL, kUltimaKeySpace);
 	_soundMenu.setClosesMenu(USE_SETTINGS);
 	_soundMenu.setClosesMenu(CANCEL);
 
@@ -243,7 +243,7 @@ IntroController::IntroController() : Controller(1),
 	_inputMenu.add(MI_INPUT_03, new BoolMenuItem("Mouse                %s",      2,  2,/*'m'*/  0, &_settingsChanged._mouseOptions._enabled));
 	_inputMenu.add(USE_SETTINGS,                 "\010 Use These Settings",      2, 11,/*'u'*/  2);
 	_inputMenu.add(CANCEL,                       "\010 Cancel",                  2, 12,/*'c'*/  2);
-	_inputMenu.addShortcutKey(CANCEL, ' ');
+	_inputMenu.addShortcutKey(CANCEL, kUltimaKeySpace);
 	_inputMenu.setClosesMenu(USE_SETTINGS);
 	_inputMenu.setClosesMenu(CANCEL);
 
@@ -257,7 +257,7 @@ IntroController::IntroController() : Controller(1),
 	_speedMenu.add(MI_SPEED_07, new IntMenuItem("Screen Shake Interval     %3d msec", 2,  8,/*'r'*/  2, &_settingsChanged._shakeInterval, MIN_SHAKE_INTERVAL, MAX_SHAKE_INTERVAL, 10));
 	_speedMenu.add(USE_SETTINGS,                "\010 Use These Settings",            2, 11,/*'u'*/  2);
 	_speedMenu.add(CANCEL,                      "\010 Cancel",                        2, 12,/*'c'*/  2);
-	_speedMenu.addShortcutKey(CANCEL, ' ');
+	_speedMenu.addShortcutKey(CANCEL, kUltimaKeySpace);
 	_speedMenu.setClosesMenu(USE_SETTINGS);
 	_speedMenu.setClosesMenu(CANCEL);
 
@@ -271,7 +271,7 @@ IntroController::IntroController() : Controller(1),
 	_gameplayMenu.add(MI_GAMEPLAY_06,   new BoolMenuItem("Debug Mode (Cheats)        %s", 2,  8,/*'d'*/  0, &_settingsChanged._debug));
 	_gameplayMenu.add(USE_SETTINGS,                      "\010 Use These Settings",       2, 11,/*'u'*/  2);
 	_gameplayMenu.add(CANCEL,                            "\010 Cancel",                   2, 12,/*'c'*/  2);
-	_gameplayMenu.addShortcutKey(CANCEL, ' ');
+	_gameplayMenu.addShortcutKey(CANCEL, kUltimaKeySpace);
 	_gameplayMenu.setClosesMenu(USE_SETTINGS);
 	_gameplayMenu.setClosesMenu(CANCEL);
 
@@ -285,7 +285,7 @@ IntroController::IntroController() : Controller(1),
 	_interfaceMenu.add(MI_INTERFACE_06, new BoolMenuItem("Ultima V Spell Mixing      %s", 2,  8,/*'m'*/ 15, &_settingsChanged._enhancementsOptions._u5SpellMixing));
 	_interfaceMenu.add(USE_SETTINGS,                     "\010 Use These Settings",       2, 11,/*'u'*/  2);
 	_interfaceMenu.add(CANCEL,                           "\010 Cancel",                   2, 12,/*'c'*/  2);
-	_interfaceMenu.addShortcutKey(CANCEL, ' ');
+	_interfaceMenu.addShortcutKey(CANCEL, kUltimaKeySpace);
 	_interfaceMenu.setClosesMenu(USE_SETTINGS);
 	_interfaceMenu.setClosesMenu(CANCEL);
 }
@@ -362,6 +362,7 @@ byte *IntroController::getSigData() {
 
 bool IntroController::keyPressed(int key) {
 	bool valid = true;
+	const char c = key & 0xFF;
 
 	switch (_mode) {
 	case INTRO_TITLES:
@@ -376,7 +377,7 @@ bool IntroController::keyPressed(int key) {
 		break;
 
 	case INTRO_MENU:
-		switch (key) {
+		switch (c) {
 		case 'i':
 			_errorMessage.clear();
 			initiateNewGame();
@@ -416,7 +417,7 @@ bool IntroController::keyPressed(int key) {
 		case '7':
 		case '8':
 		case '9':
-			g_music->introSwitch(key - '0');
+			g_music->introSwitch(c - '0');
 			break;
 		default:
 			valid = false;

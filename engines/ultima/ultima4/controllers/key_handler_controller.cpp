@@ -37,9 +37,9 @@ KeyHandler::KeyHandler(Callback func, void *d, bool asyncronous) :
 }
 
 bool KeyHandler::globalHandler(int key) {
-	if (key == Common::KEYCODE_F5) {
+	if (key == kUltimaKeyF5) {
 		(void)g_ultima->saveGameDialog();
-	} else if (key == Common::KEYCODE_F7) {
+	} else if (key == kUltimaKeyF7) {
 		(void)g_ultima->loadGameDialog();
 	}
 
@@ -49,7 +49,7 @@ bool KeyHandler::globalHandler(int key) {
 bool KeyHandler::defaultHandler(int key, void *data) {
 	bool valid = true;
 
-	switch (key) {
+	switch (key & 0xFF) {
 	case '`':
 		if (g_context && g_context->_location)
 			debug(1, "x = %d, y = %d, level = %d, tile = %d (%s)\n", g_context->_location->_coords.x, g_context->_location->_coords.y, g_context->_location->_coords.z, g_context->_location->_map->translateToRawTileIndex(*g_context->_location->_map->tileAt(g_context->_location->_coords, WITH_OBJECTS)), g_context->_location->_map->tileTypeAt(g_context->_location->_coords, WITH_OBJECTS)->getName().c_str());
@@ -67,31 +67,11 @@ bool KeyHandler::ignoreKeys(int key, void *data) {
 }
 
 bool KeyHandler::handle(int key) {
-	bool processed = false;
-	if (!isKeyIgnored(key)) {
-		processed = globalHandler(key);
-		if (!processed)
-			processed = _handler(key, _data);
-	}
+	bool processed = globalHandler(key);
+	if (!processed)
+		processed = _handler(key, _data);
 
 	return processed;
-}
-
-bool KeyHandler::isKeyIgnored(int key) {
-	switch (key) {
-	case Common::KEYCODE_RSHIFT:
-	case Common::KEYCODE_LSHIFT:
-	case Common::KEYCODE_RCTRL:
-	case Common::KEYCODE_LCTRL:
-	case Common::KEYCODE_RALT:
-	case Common::KEYCODE_LALT:
-	case Common::KEYCODE_RMETA:
-	case Common::KEYCODE_LMETA:
-	case Common::KEYCODE_TAB:
-		return true;
-	default:
-		return false;
-	}
 }
 
 bool KeyHandler::operator==(Callback cb) const {

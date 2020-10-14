@@ -47,42 +47,37 @@ ReadStringController::ReadStringController(int maxlen, TextView *view,
 
 bool ReadStringController::keyPressed(int key) {
 	int valid = true, len = _value.size();
-	size_t pos = Common::String::npos;
+	const char c = key & 0xFF;
 
-	if (key < 0x80)
-		pos = _accepted.findFirstOf(key);
-
-	if (pos != Common::String::npos) {
-		if (key == Common::KEYCODE_BACKSPACE) {
-			if (len > 0) {
-				/* remove the last character */
-				_value.erase(len - 1, 1);
-
-				if (_view) {
-					_view->textAt(_screenX + len - 1, _screenY, " ");
-					_view->setCursorPos(_screenX + len - 1, _screenY, true);
-				} else {
-					g_screen->screenHideCursor();
-					g_screen->screenTextAt(_screenX + len - 1, _screenY, " ");
-					g_screen->screenSetCursorPos(_screenX + len - 1, _screenY);
-					g_screen->screenShowCursor();
-				}
-			}
-		} else if (key == '\n' || key == '\r') {
-			doneWaiting();
-		} else if (len < _maxLen) {
-			/* add a character to the end */
-			_value += key;
+	if (key == kUltimaKeyBackspace || key == kUltimaKeyLeft) {
+		if (len > 0) {
+			/* remove the last character */
+			_value.erase(len - 1, 1);
 
 			if (_view) {
-				_view->textAt(_screenX + len, _screenY, "%c", key);
+				_view->textAt(_screenX + len - 1, _screenY, " ");
+				_view->setCursorPos(_screenX + len - 1, _screenY, true);
 			} else {
 				g_screen->screenHideCursor();
-				g_screen->screenTextAt(_screenX + len, _screenY, "%c", key);
-				g_screen->screenSetCursorPos(_screenX + len + 1, _screenY);
-				g_context->_col = len + 1;
+				g_screen->screenTextAt(_screenX + len - 1, _screenY, " ");
+				g_screen->screenSetCursorPos(_screenX + len - 1, _screenY);
 				g_screen->screenShowCursor();
 			}
+		}
+	} else if (key == kUltimaKeyReturn) {
+		doneWaiting();
+	} else if ((uint8)c >= 0x20 && (uint8)c <= 0x7F && len < _maxLen) {
+		/* add a character to the end */
+		_value += c;
+
+		if (_view) {
+			_view->textAt(_screenX + len, _screenY, "%c", c);
+		} else {
+			g_screen->screenHideCursor();
+			g_screen->screenTextAt(_screenX + len, _screenY, "%c", c);
+			g_screen->screenSetCursorPos(_screenX + len + 1, _screenY);
+			g_context->_col = len + 1;
+			g_screen->screenShowCursor();
 		}
 	} else {
 		valid = false;
