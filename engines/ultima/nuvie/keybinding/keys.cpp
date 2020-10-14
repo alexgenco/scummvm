@@ -952,16 +952,5 @@ Common::KeyCode KeyBinder::get_key_from_joy_events(Common::Event *event) {
 	}
 }
 
-char get_ascii_char_from_keysym(Common::KeyState keysym) {
-	char ascii = 0;
-	if (keysym.keycode < 128) {
-		ascii = (char)keysym.keycode;
-		if (ascii >= 97 && ascii <= 122 && keysym.flags & (Common::KBD_SHIFT | Common::KBD_CAPS)) {
-			ascii -= 32;
-		}
-	}
-	return ascii;
-}
-
 } // End of namespace Nuvie
 } // End of namespace Ultima

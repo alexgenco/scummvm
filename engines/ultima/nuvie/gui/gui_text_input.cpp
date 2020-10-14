@@ -81,7 +81,9 @@ GUI_status GUI_TextInput::MouseUp(int x, int y, Shared::MouseButton button) {
 
 GUI_status GUI_TextInput::KeyDown(const Common::KeyState &keyState) {
 	Common::KeyState key = keyState;
-	char ascii = get_ascii_char_from_keysym(key);
+	char ascii = key.getINT16hCharacter();
+	if ((uint8)ascii >= 0x80)
+		ascii = 0;
 
 	if (!focused)
 		return GUI_PASS;

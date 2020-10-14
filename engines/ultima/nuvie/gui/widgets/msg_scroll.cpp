@@ -711,7 +711,9 @@ void MsgScroll::process_page_break() {
  */
 GUI_status MsgScroll::KeyDown(const Common::KeyState &keyState) {
 	Common::KeyState key = keyState;
-	char ascii = get_ascii_char_from_keysym(key);
+	char ascii = key.getINT16hCharacter();
+	if ((uint8)ascii >= 0x80)
+		ascii = 0;
 
 	if (page_break == false && input_mode == false)
 		return (GUI_PASS);
