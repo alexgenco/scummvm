@@ -216,6 +216,20 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		0
 	},
 
+    {
+        {
+			"ultima8",
+			"Gold Edition",
+			AD_ENTRY1s("eusecode.flx", "5494165cbf4b07be04a465e28350e086", 1209018),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOMIDI)
+		},
+        GAME_ULTIMA8,
+        0
+	},
+
 	{
 		{
 			"ultima8",
