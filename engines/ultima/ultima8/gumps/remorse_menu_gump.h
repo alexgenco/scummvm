@@ -49,7 +49,7 @@ public:
 	void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
 
 	bool OnKeyDown(int key, int mod) override;
-	bool OnTextInput(int unicode) override;
+	bool OnTextInput(char c) override;
 	void ChildNotify(Gump *child, uint32 message) override;
 
 protected:

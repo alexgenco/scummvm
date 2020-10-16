@@ -324,7 +324,7 @@ public:
 	// Default, returns false, unless handled by focus child
 	virtual bool        OnKeyDown(int key, int mod);
 	virtual bool        OnKeyUp(int key);
-	virtual bool        OnTextInput(int unicode);
+	virtual bool        OnTextInput(char c);
 
 	// This is for detecting focus changes for keyboard input. Gets called true
 	// when the this gump is being set as the focus focus gump. It is called

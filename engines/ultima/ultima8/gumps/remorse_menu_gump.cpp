@@ -231,8 +231,8 @@ void RemorseMenuGump::selectEntry(int entry) {
 	}
 }
 
-bool RemorseMenuGump::OnTextInput(int unicode) {
-	if (Gump::OnTextInput(unicode)) return true;
+bool RemorseMenuGump::OnTextInput(char c) {
+	if (Gump::OnTextInput(c)) return true;
 
 	return true;
 }
