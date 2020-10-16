@@ -129,8 +129,3 @@ The Global Main Menu (GMM) is available while playing any game by pressing :kbd:
 .. image:: ../images/Launcher/gmm_help.jpg
 - **Return to Launcher:** Quits the game and returns to The Launcher. This is not available for all games.
 - **Quit:** Quits the game and ScummVM, and returns to the Operating System.
-
-
-.. caution::
-  In some games you can still access the original game menu by using :kbd:`Alt` + :kbd:`F5`. You can save and load games this way, however it is not intended for this purpose and may crash ScummVM in some games. 
-

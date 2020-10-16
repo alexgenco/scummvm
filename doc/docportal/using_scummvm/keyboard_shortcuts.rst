@@ -48,8 +48,7 @@ SCUMM games
         :kbd:`~` ,Show/hide the debugging console
         :kbd:`[` and :kbd:`]`,"Music volume, down/up"
         :kbd:`-` and :kbd:`+` ,"Text speed, slower/faster"
-        :kbd:`F5`  ,Displays a save/load box
-        :kbd:`Alt + F5`  ,"Displays the original save/load box, if the game has one. May crash the game."
+        :kbd:`F5` or :kbd:`F1` ,Displays a save/load box
         :kbd:`Space` ,Pause
         :kbd:`.` ,Skips current line of text in some games
         :kbd:`Enter` ,Simulate left mouse button press
