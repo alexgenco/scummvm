@@ -23,6 +23,7 @@
 #ifndef COMMON_KEYBOARD_H
 #define COMMON_KEYBOARD_H
 
+#include "common/codepages.h"
 #include "common/scummsys.h"
 
 #if defined(__amigaos4__) || defined(__MORPHOS__)
@@ -338,6 +339,57 @@ struct KeyState {
 		// combination should suffice.
 		return keycode == x.keycode && hasFlags(x.flags & ~KBD_STICKY);
 	}
+
+
+	/**
+	 * @name INT 16h handling
+	 *
+	 * Simulates the INT 16h 00h and 10h BIOS interrupt calls, and the INT 21h
+	 * STDIN-related functions which internally call INT 16h. This functionality
+	 * is useful for engines where the input mapping needs to match keys in the
+	 * game data. It will also deal with the mapping of extended characters.
+	 */
+	/** @{ */
+
+	/**
+	 * Simulates the INT 16h AH=00h BIOS interrupt call.
+	 * 
+	 * @param page Character encoding.
+	 * @return The full 16-bit key. The upper and lower bytes are the scan code
+	 * and character code, respectively.
+	 */
+	uint16 getINT16h00hKey(const CodePage page = kCodePage437) const;
+
+	/**
+	 * Simulates the INT 16h AH=10h BIOS interrupt call.
+	 * 
+	 * @param page Character encoding.
+	 * @return The full 16-bit key. The upper and lower bytes are the scan code
+	 * and character code, respectively.
+	 */
+	uint16 getINT16h10hKey(const CodePage page = kCodePage437) const;
+
+	/**
+	 * Returns a character as returned in AL by INT 16h functions 00h and 10h,
+	 * and INT 21h functions 06h, 07h, and 08h.
+	 * 
+	 * @param page Character encoding.
+	 * @return The 8-bit character code.
+	 */
+	byte getINT16hCharacter(const CodePage page = kCodePage437) const;
+
+	struct INT16hKeyMap {
+		KeyCode keycode;
+		uint16 normal;
+		uint16 shift;
+		uint16 ctrl;
+		uint16 alt;
+	};
+
+private:
+	uint16 mapKeyStateToINT16hKey(const INT16hKeyMap *mapPtr, const CodePage page) const;
+
+	/** @} */
 };
 
 /** @} */
