@@ -54,6 +54,45 @@ uint16 ScummEngine::getKey(const Common::KeyState &lastKeyHit) const {
 	if (!key)
 		return 0;
 
+	// WORKAROUND: We cannot keep track of the Num Lock state on all platforms,
+	// and so we need to hardcode the important cases here - bugs #10558 and
+	// #11227. Also, on some platforms, SDL only produces the KP2, KP4, KP6, and
+	// KP8 keysym events when Num Lock is on, so we cannot rely on the keycode
+	// to check for the numpad keys.
+	bool shift = false;
+	switch (_game.id) {
+	case GID_INDY3:
+		shift = true;
+		// fall through
+	case GID_INDY4:
+	case GID_PASS:
+		switch ((key >> 8) + 256) {
+		case SCUMM_KEY_KP1:
+			return shift ? '1' : key;
+		case SCUMM_KEY_KP2:
+			return shift ? '2' : key;
+		case SCUMM_KEY_KP3:
+			return shift ? '3' : key;
+		case SCUMM_KEY_KP4:
+			return shift ? '4' : key;
+		case SCUMM_KEY_KP5:
+			return shift ? '5' : key;
+		case SCUMM_KEY_KP6:
+			return shift ? '6' : key;
+		case SCUMM_KEY_KP7:
+			return shift ? '7' : key;
+		case SCUMM_KEY_KP8:
+			return shift ? '8' : key;
+		case SCUMM_KEY_KP9:
+			return shift ? '9' : key;
+		default:
+			break;
+		}
+		break;
+	default:
+		break;
+	}
+
 	return key & 0xFF ? key & 0xFF : (key >> 8) + 256;
 }
 
