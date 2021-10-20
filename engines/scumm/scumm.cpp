@@ -167,6 +167,8 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_objs = NULL;
 	_sound = NULL;
 	memset(&vm, 0, sizeof(vm));
+	_msecFractionalParts = 0;
+	_lastWaitTime = 0;
 	_pauseDialog = NULL;
 	_versionDialog = NULL;
 	_fastMode = 0;
@@ -2121,21 +2123,20 @@ Common::Error ScummEngine::go() {
 		_saveLoadFlag = 0;
 	}
 
-	int diff = 0;	// Duration of one loop iteration
-
 	while (!shouldQuit()) {
 		// Randomize the PRNG by calling it at regular intervals. This ensures
 		// that it will be in a different state each time you run the program.
 		_rnd.getRandomNumber(2);
 
 		// Notify the script about how much time has passed, in ticks (60 ticks per second)
+		const uint32 diff = _system->getMillis() - _lastWaitTime;
 		if (VAR_TIMER != 0xFF)
 			VAR(VAR_TIMER) = diff * 60 / 1000;
 		if (VAR_TIMER_TOTAL != 0xFF)
 			VAR(VAR_TIMER_TOTAL) += diff * 60 / 1000;
 
 		// Determine how long to wait before the next loop iteration should start
-		int delta = (VAR_TIMER_NEXT != 0xFF) ? VAR(VAR_TIMER_NEXT) : 4;
+		byte delta = (VAR_TIMER_NEXT != 0xFF) ? VAR(VAR_TIMER_NEXT) : 4;
 		if (delta < 1)	// Ensure we don't get into an endless loop
 			delta = 1;  // by not decreasing sleepers.
 
@@ -2150,25 +2151,19 @@ Common::Error ScummEngine::go() {
 			delta += ((ScummEngine_v0 *)this)->DelayCalculateDelta();
 		}
 
-		// WORKAROUND: walking speed in the original v1 interpreter
-		// is sometimes slower (e.g. during scrolling) than in ScummVM.
-		// This is important for the door-closing action in the dungeon,
-		// otherwise (delta < 6) a single kid is able to escape.
-		if (_game.version == 1 && isScriptRunning(137)) {
-				delta = 6;
+		// WORKAROUND: In MANIAC V1, the strange workings of the wait loop will
+		// increment the timer past the comparison, producing a longer wait loop
+		// than expected. We need to round up VAR_TIMER_NEXT to the nearest
+		// multiple of three, as one tick represents three frames.
+		if (_game.id == GID_MANIAC && _game.version == 1) {
+			delta = ceil(VAR(VAR_TIMER_NEXT) / 3) * 3;
 		}
 
 		// Wait...
-		waitForTimer(delta * 1000 / 60 - diff);
-
-		// Start the stop watch!
-		diff = _system->getMillis();
+		waitForTimer(delta << 2);
 
 		// Run the main loop
 		scummLoop(delta);
-
-		// Halt the stop watch and compute how much time this iteration took.
-		diff = _system->getMillis() - diff;
 
 
 		if (shouldQuit()) {
@@ -2180,15 +2175,33 @@ Common::Error ScummEngine::go() {
 	return Common::kNoError;
 }
 
-void ScummEngine::waitForTimer(int msec_delay) {
-	uint32 start_time;
+void ScummEngine::waitForTimer(uint16 delay) {
+	// WORKAROUND: In MANIAC V1, the timer resolution is lower than the
+	// frame-time derived from it, i.e. one tick represents three frames.
+	if (_game.id == GID_MANIAC && _game.version == 1) {
+		delay = ceil(VAR(VAR_TIMER_NEXT) / 3);
+	}
+
+	// Convert to milliseconds, decompose to integral and fractional parts,
+	// then increment the integer if needed.
+	const double fMsecDelay = delay * (1000 / getTimerFrequency());
+	uint32 msecDelay = (uint32)fMsecDelay;
+	_msecFractionalParts += fMsecDelay - msecDelay;
+	msecDelay += (uint32)_msecFractionalParts;
+	if (_msecFractionalParts >= 1)
+		_msecFractionalParts--;
 
 	if (_fastMode & 2)
-		msec_delay = 0;
+		msecDelay = 0;
 	else if (_fastMode & 1)
-		msec_delay = 10;
+		msecDelay = 10;
 
-	start_time = _system->getMillis();
+	// Halt the stop watch and compute how much time this iteration took.
+	const uint32 diff = _system->getMillis() - _lastWaitTime;
+	msecDelay = (msecDelay > diff) ? msecDelay - diff : 0;
+
+	uint32 time;
+	const uint32 wakeUpTime = _system->getMillis() + msecDelay;
 
 	while (!shouldQuit()) {
 		_sound->updateCD(); // Loop CD Audio if needed
@@ -2200,19 +2213,51 @@ void ScummEngine::waitForTimer(int msec_delay) {
 #endif
 
 		_system->updateScreen();
-		if (_system->getMillis() >= start_time + msec_delay)
+
+		time = _system->getMillis();
+		if (time + 10 < wakeUpTime) {
+			_system->delayMillis(10);
+		} else {
+			if (time < wakeUpTime)
+				_system->delayMillis(wakeUpTime - time);
 			break;
-		_system->delayMillis(10);
+		}
+	}
+
+	// Start the stop watch!
+	_lastWaitTime = wakeUpTime;
+}
+
+double ScummEngine::getTimerFrequency() const {
+	const double frequencyIntel8253 = 1193182.0;
+	// WORKAROUND: We need to check for kPlatformUnknown for some DOS games.
+	if (_game.platform != Common::kPlatformDOS && _game.platform != Common::kPlatformUnknown)
+		return 240.0;
+
+	switch (_game.version) {
+	case 1:
+		if (_game.id == GID_MANIAC)
+			return frequencyIntel8253 / 65536; // 18.2065 Hz
+	case 2:
+	case 3:
+	case 4:
+		if (_game.id == GID_MONKEY_VGA)
+			return frequencyIntel8253 / 2521 / 2; // 236.6485 Hz
+		return frequencyIntel8253 / 5041;         // 236.6955 Hz
+	case 6:
+		return 236.0;
+	default:
+		return 240.0;
 	}
 }
 
-void ScummEngine_v0::scummLoop(int delta) {
+void ScummEngine_v0::scummLoop(byte delta) {
 	VAR(VAR_IS_SOUND_RUNNING) = (_sound->_lastSound && _sound->isSoundRunning(_sound->_lastSound) != 0);
 
 	ScummEngine::scummLoop(delta);
 }
 
-void ScummEngine::scummLoop(int delta) {
+void ScummEngine::scummLoop(byte delta) {
 	if (_game.version >= 3) {
 		VAR(VAR_TMR_1) += delta;
 		VAR(VAR_TMR_2) += delta;
@@ -2379,7 +2424,7 @@ load_game:
 }
 
 #ifdef ENABLE_HE
-void ScummEngine_v90he::scummLoop(int delta) {
+void ScummEngine_v90he::scummLoop(byte delta) {
 	_moviePlay->handleNextFrame();
 	if (_game.heversion >= 98) {
 		_logicHE->startOfFrame();
