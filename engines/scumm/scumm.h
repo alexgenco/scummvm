@@ -364,7 +364,7 @@ protected:
 	int getTalkSpeed();
 
 	// Scumm main loop & helper functions.
-	virtual void scummLoop(int delta);
+	virtual void scummLoop(byte delta);
 	virtual void scummLoop_updateScummVars();
 	virtual void scummLoop_handleSaveLoad();
 	virtual void scummLoop_handleDrawing();
@@ -380,7 +380,10 @@ public:
 protected:
 	virtual void parseEvent(Common::Event event);
 
-	void waitForTimer(int msec_delay);
+	void waitForTimer(uint16 delay);
+	double getTimerFrequency() const;
+	double _msecFractionalParts;
+	uint32 _lastWaitTime;
 	virtual void processInput();
 	virtual void processKeyboard(Common::KeyState lastKeyHit);
 	virtual void clearClickedStatus();

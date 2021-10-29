@@ -157,6 +157,9 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_objs = NULL;
 	_sound = NULL;
 	memset(&vm, 0, sizeof(vm));
+	_msecFractionalParts=0;
+//FFYTE
+	_lastWaitTime = 0;
 	_pauseDialog = NULL;
 	_versionDialog = NULL;
 	_fastMode = 0;
@@ -1661,9 +1664,10 @@ void ScummEngine::setupCharsetRenderer(const Common::String &macFontFile) {
 #endif
 		if (_game.platform == Common::kPlatformFMTowns)
 			_charset = new CharsetRendererTownsV3(this);
-		else if (_game.platform == Common::kPlatformMacintosh && !macFontFile.empty())
-			_charset = new CharsetRendererMac(this, macFontFile);
-		else
+		else if (_game.platform == Common::kPlatformMacintosh && !macFontFile.empty()) {
+			bool correctFontSpacing = _game.id == GID_LOOM || ConfMan.getBool("mac_v3_correct_font_spacing");
+			_charset = new CharsetRendererMac(this, macFontFile, correctFontSpacing);
+		} else
 			_charset = new CharsetRendererV3(this);
 #ifdef ENABLE_SCUMM_7_8
 	} else if (_game.version == 8) {
@@ -2345,7 +2349,7 @@ Common::Error ScummEngine::go() {
 		_saveLoadFlag = 0;
 	}
 
-	int diff = 0;	// Duration of one loop iteration
+//	int diff = 0;	// Duration of one loop iteration
 
 	while (!shouldQuit()) {
 		// Randomize the PRNG by calling it at regular intervals. This ensures
@@ -2353,13 +2357,14 @@ Common::Error ScummEngine::go() {
 		_rnd.getRandomNumber(2);
 
 		// Notify the script about how much time has passed, in ticks (60 ticks per second)
+		const uint32 diff = _system->getMillis() - _lastWaitTime;
 		if (VAR_TIMER != 0xFF)
 			VAR(VAR_TIMER) = diff * 60 / 1000;
 		if (VAR_TIMER_TOTAL != 0xFF)
 			VAR(VAR_TIMER_TOTAL) += diff * 60 / 1000;
 
 		// Determine how long to wait before the next loop iteration should start
-		int delta = (VAR_TIMER_NEXT != 0xFF) ? VAR(VAR_TIMER_NEXT) : 4;
+		byte delta = (VAR_TIMER_NEXT != 0xFF) ? VAR(VAR_TIMER_NEXT) : 4;
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 		// FM-Towns only. The original has a mechanism to let the scrolling catch up to the engine. This avoids glitches, e. g.
 		// when the engine draws actors or objects to the far left/right of the screen while the scrolling hasn't caught up yet.
@@ -2390,21 +2395,23 @@ Common::Error ScummEngine::go() {
 		// is sometimes slower (e.g. during scrolling) than in ScummVM.
 		// This is important for the door-closing action in the dungeon,
 		// otherwise (delta < 6) a single kid is able to escape.
-		if (_game.version == 1 && isScriptRunning(137)) {
-				delta = 6;
+		if (_game.id == GID_MANIAC && _game.version == 1) {
+				delta = ceil(VAR(VAR_TIMER_NEXT)/3)*3;
 		}
 
 		// Wait...
-		waitForTimer(delta * 1000 / 60 - diff);
+//FFYTE
+/*		waitForTimer(delta * 1000 / 60 - diff);
 
 		// Start the stop watch!
 		diff = _system->getMillis();
-
+*/
+		waitForTimer(delta <<2);
 		// Run the main loop
 		scummLoop(delta);
 
 		// Halt the stop watch and compute how much time this iteration took.
-		diff = _system->getMillis() - diff;
+//		diff = _system->getMillis() - diff;
 
 
 		if (shouldQuit()) {
@@ -2416,16 +2423,28 @@ Common::Error ScummEngine::go() {
 	return Common::kNoError;
 }
 
-void ScummEngine::waitForTimer(int msec_delay) {
-	uint32 start_time;
+void ScummEngine::waitForTimer(uint16 delay) {
+//FFYTE
+//	uint32 start_time;
+	if(_game.id == GID_MANIAC && _game.version == 1) {
+delay = ceil(VAR(VAR_TIMER_NEXT) /3);
+}
+
+const double fMsecDelay = delay*(1000/ getTimerFrequency());
+uint32 msecDelay = (uint32) fMsecDelay;
+_msecFractionalParts += fMsecDelay - msecDelay;
+msecDelay += (uint32) _msecFractionalParts;
+if(_msecFractionalParts >= 1) _msecFractionalParts--;
 
 	if (_fastMode & 2)
-		msec_delay = 0;
+		msecDelay = 0;
 	else if (_fastMode & 1)
-		msec_delay = 10;
-
-	start_time = _system->getMillis();
-
+		msecDelay = 10;
+	const uint32 diff = _system->getMillis() - _lastWaitTime;
+	msecDelay = (msecDelay > diff) ? msecDelay - diff:0;
+	//start_time = _system->getMillis();
+	uint32 time;
+	const uint32 wakeUpTime = _system->getMillis() +msecDelay;
 	while (!shouldQuit()) {
 		_sound->updateCD(); // Loop CD Audio if needed
 		parseEvents();
@@ -2435,7 +2454,16 @@ void ScummEngine::waitForTimer(int msec_delay) {
 		towns_updateGfx();
 #endif
 		_system->updateScreen();
+//FFYTE
 		uint32 cur = _system->getMillis();
+		time = _system->getMillis();
+		if(time + 10 < wakeUpTime) {
+		_system->delayMillis(10);
+}
+else { if (time<wakeUpTime) _system->delayMillis(wakeUpTime - time);
+break;
+
+}
 
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 		// These measurements are used to determine whether the FM-Towns smooth scrolling is likely to fall behind and need to catch
@@ -2444,19 +2472,44 @@ void ScummEngine::waitForTimer(int msec_delay) {
 		_refreshDuration[_refreshArrayPos] = (int)(cur - screenUpdateTimerStart);
 		_refreshArrayPos = (_refreshArrayPos + 1) % ARRAYSIZE(_refreshDuration);
 #endif
-		if (cur >= start_time + msec_delay)
-			break;
-		_system->delayMillis(10);
+//		if (cur >= start_time + msec_delay)
+//			break;
+//		_system->delayMillis(10);
 	}
+_lastWaitTime = wakeUpTime;
 }
 
-void ScummEngine_v0::scummLoop(int delta) {
+double ScummEngine::getTimerFrequency() const {
+const double frequencyIntel8253 = 1193182.0;
+	// WORKAROUND: We need to check for kPlatformUnknown for some DOS games.
+	if (_game.platform != Common::kPlatformDOS && _game.platform != Common::kPlatformUnknown)
+		return 240.0;
+
+	switch (_game.version) {
+	case 1:
+	     	if(_game.id == GID_MANIAC)
+			return frequencyIntel8253 /65536;	
+	case 2:
+	case 3:
+	case 4:
+		if (_game.id == GID_MONKEY_VGA)
+			return frequencyIntel8253 / 2521 / 2; // 236.6485 Hz
+		return frequencyIntel8253 / 5041;         // 236.6955 Hz
+	case 6:
+		return 236.0;
+	default:
+		return 240.0;
+	}
+
+}
+
+void ScummEngine_v0::scummLoop(byte delta) {
 	VAR(VAR_IS_SOUND_RUNNING) = (_sound->_lastSound && _sound->isSoundRunning(_sound->_lastSound) != 0);
 
 	ScummEngine::scummLoop(delta);
 }
 
-void ScummEngine::scummLoop(int delta) {
+void ScummEngine::scummLoop(byte delta) {
 	if (_game.version >= 3) {
 		VAR(VAR_TMR_1) += delta;
 		VAR(VAR_TMR_2) += delta;
@@ -2615,7 +2668,7 @@ load_game:
 }
 
 #ifdef ENABLE_HE
-void ScummEngine_v90he::scummLoop(int delta) {
+void ScummEngine_v90he::scummLoop(byte delta) {
 	_moviePlay->handleNextFrame();
 	if (_game.heversion >= 98) {
 		_logicHE->startOfFrame();

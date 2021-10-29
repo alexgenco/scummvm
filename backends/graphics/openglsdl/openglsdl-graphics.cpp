@@ -537,7 +537,8 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 	if (!_glContext) {
 		return false;
 	}
-
+	//Disable vsync
+	SDL_GL_SetSwapInterval(0);
 	notifyContextCreate(rgba8888, rgba8888);
 	int actualWidth, actualHeight;
 	getWindowSizeFromSdl(&actualWidth, &actualHeight);

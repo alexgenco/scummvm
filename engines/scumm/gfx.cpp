@@ -66,9 +66,10 @@ struct StripTable {
 };
 
 enum {
-	kScrolltime = 500,  // ms scrolling is supposed to take
-	kPictureDelay = 20,
-	kFadeDelay = 4 // 1/4th of a jiffie
+	//kScrolltime = 500,  // ms scrolling is supposed to take
+	//kPictureDelay = 20,
+	//kFadeDelay = 4 // 1/4th of a jiffie
+	kPictureDelay = 5,
 };
 
 #define NUM_SHAKE_POSITIONS 8
@@ -3927,7 +3928,9 @@ void ScummEngine::transitionEffect(int a) {
 	int bottom;
 	int l, t, r, b;
 	const int height = MIN((int)_virtscr[kMainVirtScreen].h, _screenHeight);
-	const int delay = (VAR_FADE_DELAY != 0xFF) ? VAR(VAR_FADE_DELAY) * kFadeDelay : kPictureDelay;
+//FFYTE
+//	const int delay = (VAR_FADE_DELAY != 0xFF) ? VAR(VAR_FADE_DELAY) * kFadeDelay : kPictureDelay;
+	const int delay = (VAR_FADE_DELAY != 0xFF) ? VAR(VAR_FADE_DELAY) : kPictureDelay;
 
 	for (i = 0; i < 16; i++) {
 		delta[i] = transitionEffects[a].deltaTable[i];
@@ -4081,14 +4084,15 @@ void ScummEngine::dissolveEffect(int width, int height) {
 
 		if (++blits >= blits_before_refresh) {
 			blits = 0;
-			waitForTimer(30);
+//FFYTE
+			waitForTimer(8);
 		}
 	}
 
 	free(offsets);
 
 	if (blits != 0) {
-		waitForTimer(30);
+		waitForTimer(8);
 	}
 }
 
@@ -4103,16 +4107,19 @@ void ScummEngine::scrollEffect(int dir) {
 	VirtScreen *vs = &_virtscr[kMainVirtScreen];
 
 	int x, y;
-	int step;
-	const int delay = (VAR_FADE_DELAY != 0xFF) ? VAR(VAR_FADE_DELAY) * kFadeDelay : kPictureDelay;
+	/*int step;
+//FFYTE
+//	const int delay = (VAR_FADE_DELAY != 0xFF) ? VAR(VAR_FADE_DELAY) * kFadeDelay : kPictureDelay;
+	const int delay = VAR(VAR_FADE_DELAY);
 
 	if ((dir == 0) || (dir == 1))
 		step = vs->h;
 	else
 		step = vs->w;
 
-	step = (step * delay) / kScrolltime;
-
+	step = (step * delay) / kScrolltime;*/
+	const int step = 8;
+	const int delay = VAR(VAR_FADE_DELAY);
 	byte *src;
 	int m = _textSurfaceMultiplier;
 	int vsPitch = vs->pitch;

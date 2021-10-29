@@ -88,12 +88,14 @@ Common::KeymapArray MetaEngine::initKeymaps(const char *target) const {
 	act->setKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE));
 	act->addDefaultInputMapping("ESCAPE");
 	act->addDefaultInputMapping("JOY_Y");
+	act->allowKbdRepeats();
 	engineKeyMap->addAction(act);
 
 	act = new Action("SKLI", _("Skip line"));
 	act->setKeyEvent(KeyState(KEYCODE_PERIOD, '.'));
 	act->addDefaultInputMapping("PERIOD");
 	act->addDefaultInputMapping("JOY_X");
+	act->allowKbdRepeats();
 	engineKeyMap->addAction(act);
 
 	act = new Action("PIND", _("Predictive input dialog"));
